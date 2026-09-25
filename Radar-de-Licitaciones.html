@@ -1,0 +1,269 @@
+<!DOCTYPE html><html lang="es"><head><meta charset="utf-8">
+<title>Radar de Licitaciones - Documento de proyecto</title>
+<style>
+@page { size: A4; margin: 18mm 15mm; }
+body { font-family: "Segoe UI", Arial, sans-serif; font-size: 9.6pt; line-height: 1.45; color: #1a1a1a; }
+h1 { font-size: 20pt; color: #0b3d5c; border-bottom: 3px solid #0b3d5c; padding-bottom: 5px; margin-top: 0; }
+h2 { font-size: 14pt; color: #0b3d5c; border-bottom: 1px solid #c9d6dd; padding-bottom: 3px; margin-top: 22px; page-break-after: avoid; }
+h3 { font-size: 11.5pt; color: #14506f; margin-top: 15px; page-break-after: avoid; }
+h4 { font-size: 10pt; color: #333; margin-top: 12px; }
+p { margin: 6px 0; text-align: justify; }
+table { border-collapse: collapse; width: 100%; margin: 9px 0; font-size: 8.4pt; page-break-inside: avoid; }
+th { background: #0b3d5c; color: #fff; text-align: left; padding: 5px 6px; border: 1px solid #0b3d5c; }
+td { padding: 4px 6px; border: 1px solid #c9d6dd; vertical-align: top; }
+tr:nth-child(even) td { background: #f4f7f9; }
+code { background: #eef2f4; padding: 1px 4px; border-radius: 2px; font-family: Consolas, monospace; font-size: 8.6pt; }
+pre { background: #f4f7f9; border-left: 3px solid #0b3d5c; padding: 8px 10px; overflow-x: auto; page-break-inside: avoid; }
+pre code { background: none; padding: 0; }
+ul, ol { margin: 6px 0 6px 18px; padding: 0; }
+li { margin: 3px 0; }
+blockquote { border-left: 3px solid #c9d6dd; background: #f7fafb; margin: 9px 0; padding: 7px 11px; color: #444; font-style: italic; }
+hr { border: none; border-top: 1px solid #c9d6dd; margin: 16px 0; }
+.cover { text-align: center; padding-top: 60mm; page-break-after: always; }
+.cover h1 { border: none; font-size: 30pt; margin: 0 0 6px; }
+.cover .sub { font-size: 13pt; color: #555; margin-bottom: 26px; }
+.cover .meta { font-size: 10pt; color: #777; line-height: 1.9; }
+.cover .rule { width: 90px; height: 3px; background: #0b3d5c; margin: 0 auto 26px; }
+.toc li { margin: 5px 0; font-size: 10.5pt; }
+</style></head><body>
+<div class="cover"><h1>Radar de Licitaciones</h1><div class="rule"></div><div class="sub">Documento de proyecto</div><div class="sub" style="font-size:11pt">Marco logico, requerimientos, arquitectura, plan de negocios, cronograma y riesgos</div><div class="meta">Version 1.0 &nbsp;&middot;&nbsp; 25 de septiembre de 2026<br>Colombia &nbsp;&middot;&nbsp; Datos: SECOP II / datos.gov.co</div></div>
+<h1>Contenido</h1><ul class="toc">
+<li>1. Marco logico</li>
+<li>2. Requerimientos y requisitos</li>
+<li>3. Arquitectura, datos y limitaciones tecnicas</li>
+<li>4. Plan de negocios</li>
+<li>5. Cronograma, presupuesto y riesgos</li>
+</ul>
+<div style="page-break-before:always"></div>
+<h1>1. Marco logico</h1>
+<p><strong>Nombre:</strong> Radar de Licitaciones <strong>Version:</strong> 1.0 <strong>Fecha:</strong> 25 de septiembre de 2026 <strong>Pais de operacion inicial:</strong> Colombia</p>
+<hr>
+<h2>1.1 Problema</h2>
+<p>Las empresas constructoras y de ingenieria que viven del sector publico en Colombia pierden oportunidades de licitacion por tres motivos que se repiten en cada empresa:</p>
+<ol>
+<li><strong>No se enteran a tiempo.</strong> Los procesos se publican en SECOP y se cierran en</li>
+</ol>
+<p>   plazos cortos. Quien no esta mirando a diario, se entera cuando ya termino el    plazo de presentacion.</p>
+<ol>
+<li><strong>Leen procesos que no pueden ganar.</strong> El costo de leer y evaluar un pliego de</li>
+</ol>
+<p>   150 a 200 paginas es de horas de un profesional. Sin un filtro previo, se gastan    esas horas en procesos que despues se descartan por falta de certificacion, de    presupuesto o de EXPERIiencia.</p>
+<ol>
+<li><strong>No saben a cuanto licitar.</strong> No existe referenciainternal de lo que la</li>
+</ol>
+<p>   competencia cobro por obras similares en su propia region. Terminan licitando a    ciegas, o Tugurmente, copiando el precio de un processo antiguo.</p>
+<p>El resultado agregado es que el equipo comercial se convierte en un filtro manual de oportunidades, en lugar de un mecanismo de postulacion. Es tiempo caro de un profesional cualificado que no participa en ninguna postulacion.</p>
+<h2>1.2 Analisis de causa</h2>
+<table><thead><tr><th>Causa raiz</th><th>Manifestacion</th><th>Es solucionable con datos publicos</th></tr></thead><tbody><tr><td>Sin monitoreo sistematico</td><td>Depende de que alguien se acuerde de revisar</td><td>Si: consulta automatica</td></tr><tr><td>Sin filtro de pertinencia</td><td>Se evalua todo</td><td>Si: laEntidad, el objeto y el presupuesto estan publicados</td></tr><tr><td>Sin referencia de precios</td><td>Licitan por intuicion</td><td>Si: el valor adjudicado es publico y historico</td></tr><tr><td>El volumen aplasta al analysta</td><td>500+ procesos abiertos a la vez</td><td>Parcialmente: la priorizacion automatica</td></tr></tbody></table>
+<p>La cuarta causa es la unica que no se resuelve por completo con datos: la decision de a que proceso conviene destinar recursos humanos sigue siendo una decision del cliente. Por eso el producto ordena y descarta, pero no decide.</p>
+<h2>1.3 Objetivo general</h2>
+<p>Incrementar la tasa de participacion efectiva en licitaciones publicas por parte de las empresas constructoras cliente, delivered mediante un sistema que detecta, prioriza y descarta oportunidades de forma automatica y sostenida.</p>
+<h2>1.4 Objetivos especificos</h2>
+<ol>
+<li>Detectar el <strong>100%</strong> de los procesos de licitacion publicados en la region</li>
+</ol>
+<p>   objetivo dentro de las <strong>24 horas</strong> siguientes a su publicacion.</p>
+<ol>
+<li>Entregar al cliente una lista de <strong>maximo 15 oportunidades priorizadas</strong> por</li>
+</ol>
+<p>   corrida, con puntaje de pertinencia y explicacion del puntaje.</p>
+<ol>
+<li>Reducir el tiempo de evaluacion inicial de un proceso de <strong>4 horas a 15 minutos</strong>.</li>
+<li>Proporcionar referencia de precio de las <strong>ultimas 12 adjudicaciones</strong> del mismo</li>
+</ol>
+<p>   sector y region, para sustentar la decision de oferzar.</p>
+<ol>
+<li>Alcanzar una precision de filtro de <strong>85% o mas</strong>, medida como proportion de</li>
+</ol>
+<p>   oportunidades entregadas que el cliente califico como pertinente.</p>
+<h2>1.5 Metas</h2>
+<table><thead><tr><th>Meta</th><th>Indicador</th><th>Valor objetivo</th><th>Plazo</th><th>Linea base</th></tr></thead><tbody><tr><td>M-1</td><td>Tiempo de entrega del informe</td><td>Menor a 30 minutos desde la publicacion</td><td>3 meses</td><td>4 dias (revision manual)</td></tr><tr><td>M-2</td><td>Oportunidades pertinentes entregadas por mes</td><td>20 o mas</td><td>6 meses</td><td>3 (estimacion del cliente)</td></tr><tr><td>M-3</td><td>Postulaciones presentadas originadas en el servicio</td><td>1 por cliente por trimestre</td><td>12 meses</td><td>0</td></tr><tr><td>M-4</td><td>Tasa de renovacion de clientes</td><td>70% de la base al mes 12</td><td>12 meses</td><td>N/A</td></tr><tr><td>M-5</td><td>precision del filtro</td><td>85% o mas</td><td>6 meses</td><td>N/A (medible desde el inicio)</td></tr></tbody></table>
+<p>La linea base de M-2 y M-3 debe confirmarse en la reunion de arranque con cada cliente: sin ella, la mejora no es demostrable.</p>
+<h2>1.6 Indicadores</h2>
+<table><thead><tr><th>Codigo</th><th>Indicador</th><th>Formula</th><th>Meta</th><th>Frecuencia</th></tr></thead><tbody><tr><td>IND-01</td><td>Cobertura de deteccion</td><td>Procesos detectados / procesos publicados en el periodo</td><td>100%</td><td>Semanal</td></tr><tr><td>IND-02</td><td>Latencia de deteccion</td><td>Hora de entrega - hora de publicacion</td><td>&lt; 24 h</td><td>Semanal</td></tr><tr><td>IND-03</td><td>Precision del filtro</td><td>Oportunidades marcadas pertinentes / oportunidades entregadas</td><td>&gt;= 85%</td><td>Mensual</td></tr><tr><td>IND-04</td><td>Tasa de descarte util</td><td>Procesos descartados que el cliente confirma descartables / total descartado</td><td>&gt;= 90%</td><td>Mensual</td></tr><tr><td>IND-05</td><td>Tiempo de evaluacion</td><td>Tiempo medio del cliente desde recibir el informe hasta decidir</td><td>&lt;= 15 min</td><td>Mensual</td></tr><tr><td>IND-06</td><td>Postulaciones viables</td><td>Informes que derivaron en una postulacion presentada</td><td>&gt;= 1 por trimestre</td><td>Trimestral</td></tr><tr><td>IND-07</td><td>Ingreso recurrente</td><td>Suscripciones activas x precio mensual</td><td>Segun plan</td><td>Mensual</td></tr></tbody></table>
+<p>IND-03 e IND-04 son los unicos que miden el valor real. Los demas miden operacion. La diferencia importa: un producto que entrega 30 oportunidades y el cliente considera 3 pertinentes no sirve, aunque haya "mucho volumen".</p>
+<h2>1.7 Supuestos</h2>
+<ul>
+<li>El portal de datos abiertos de datos.gov.co mantendra la disponibilidad del</li>
+</ul>
+<p>  dataset <code>p6dx-8zbt</code> y la calidad actual de sus campos.</p>
+<ul>
+<li>El cliente mantiene actualizado su perfil (certificaciones, zona, rango).</li>
+<li>La empresa cuenta al menos con una persona que decide sobre presentacion.</li>
+<li>Los procesos interadministrativos, que tienen menos detalle, no son el canal</li>
+</ul>
+<p>  principal del cliente.</p>
+<h2>1.8 Restricciones</h2>
+<ul>
+<li><strong>Presupuesto inicial limitado.</strong> No hay inversion en software propietario: todo</li>
+</ul>
+<p>  corre sobre datos publicos y herramientas gratuitas o de bajo costo.</p>
+<ul>
+<li><strong>Un solo cliente a la vez.</strong> El servicio es artesanal en su fase de calibracion.</li>
+<li><strong>Sin acceso a informacion privada.</strong> Todo lo que el sistema sabe es publico. No</li>
+</ul>
+<p>  se promise informacion que solo existe dentro de la empresa.</p>
+<ul>
+<li><strong>Sin garantia de adjudicacion.</strong> El sistema entrega priorizacion, no resultados.</li>
+</ul>
+<p>  Esta distincion debe estar escrita en el contrato.</p>
+<div style="page-break-before:always"></div>
+<h1>2. Requerimientos y requisitos</h1>
+<blockquote>La estructura de la seccion 2.1 (codificacion RF-01..RF-12 con MoSCoW) se tomo de una propuesta generada con <code>gemma-4-26b-a4b-it</code>. El contenido fue reescrito y verificado contra la ejecucion real del motor.</blockquote>
+<hr>
+<h2>2.1 Requerimientos funcionales</h2>
+<p>Prioridad segun MoSCoW: <strong>M</strong> = must (sin esto no hay producto), <strong>S</strong> = should, <strong>C</strong> = could, <strong>W</strong> = wont (fuera de alcance en la version 1).</p>
+<table><thead><tr><th>ID</th><th>Nombre</th><th>Descripcion</th><th>Prioridad</th></tr></thead><tbody><tr><td>RF-01</td><td>Extraccion de procesos</td><td>Consultar <code>p6dx-8zbt</code> y traer procesos con <code>estado_de_apertura_del_proceso = 'Abierto'</code></td><td><strong>M</strong></td></tr><tr><td>RF-02</td><td>Perfil de cliente</td><td>Configurar por cliente: sector (palabras clave + categoria UNSPSC), departamentos, rango de presupuesto</td><td><strong>M</strong></td></tr><tr><td>RF-03</td><td>Calculo de puntaje</td><td>Puntaje 0-100 por sector (60), zona (20) y presupuesto (20), con penalizaciones</td><td><strong>M</strong></td></tr><tr><td>RF-04</td><td>Explicacion del puntaje</td><td>Cada oportunidad incluye las razones que produjeron su puntaje</td><td><strong>M</strong></td></tr><tr><td>RF-05</td><td>Enlace al proceso</td><td>Incluir <code>urlproceso</code> para llevar al cliente directo al pliego</td><td><strong>M</strong></td></tr><tr><td>RF-06</td><td>Exportacion CSV</td><td>Archivo <code>oportunidades.csv</code> con codificacion UTF-8 con BOM, abrir en Excel sin perder acentos</td><td><strong>M</strong></td></tr><tr><td>RF-07</td><td>Filtro por modalidad</td><td>Separar licitacion publica, minima cuantia y contratacion directa, que compiten distinto</td><td><strong>S</strong></td></tr><tr><td>RF-08</td><td>Informe de descartes</td><td>Listar los descartados con la causa, para que el cliente verifique que no se le oculto nada</td><td><strong>S</strong></td></tr><tr><td>RF-09</td><td>Referencia de precios</td><td>Minimo, mediana y maximo de adjudicaciones recientes del mismo sector y zona</td><td><strong>S</strong></td></tr><tr><td>RF-10</td><td>Alerta periodica</td><td>Ejecucion automatica semanal y envio del informe</td><td><strong>S</strong></td></tr><tr><td>RF-11</td><td>Limpieza de texto con LLM</td><td>Normalizar objetos sucios y clasificar sector cuando el texto es ambiguo</td><td><strong>S</strong></td></tr><tr><td>RF-12</td><td>Historico persistido</td><td>Guardar corridas para medir precision y construir el benchmark</td><td><strong>C</strong></td></tr><tr><td>RF-13</td><td>Dashboard web</td><td>Interfaz visual para el cliente</td><td><strong>W</strong> (v2)</td></tr><tr><td>RF-14</td><td>Integracion con CRM</td><td>Envio directo a HubSpot o Pipedrive</td><td><strong>W</strong> (v2)</td></tr></tbody></table>
+<p>RF-13 y RF-14 estan fuera de alcance a proposito. El cliente actual abre un archivo y eso es suficiente; una interfaz es trabajo de mantenimiento que no se justifica hasta tener varios clientes.</p>
+<h2>2.2 Requerimientos no funcionales</h2>
+<table><thead><tr><th>ID</th><th>Categoria</th><th>Requisito</th><th>Metrica de cumplimiento</th></tr></thead><tbody><tr><td>RNF-01</td><td>Rendimiento</td><td>Correr el barrido completo y generar el informe</td><td>&lt; 5 minutos para 500 procesos</td></tr><tr><td>RNF-02</td><td>Rendimiento</td><td>Latencia de consulta a Socrata</td><td>&lt; 15 s por llamada; usar <code>$limit</code> y <code>$select</code> para reducir la carga</td></tr><tr><td>RNF-03</td><td>Disponibilidad</td><td>Tolerar caida del portal sin perder el cliente</td><td>Reintento con espera creciente y ultimo informe guardado siempre disponible</td></tr><tr><td>RNF-04</td><td>Seguridad</td><td>No exponer credenciales de API en el codigo</td><td>Claves por variable de entorno, nunca en el repositorio</td></tr><tr><td>RNF-05</td><td>Seguridad</td><td>Datos de cliente aislados</td><td>Un perfil por archivo; sin datos personales de terceros</td></tr><tr><td>RNF-06</td><td>Mantenibilidad</td><td>Cero dependencias externas</td><td>Solo biblioteca estandar de Python, para que corra en cualquier equipo</td></tr><tr><td>RNF-07</td><td>Calidad de datos</td><td>Validar campos nulos y sentinel</td><td>Tratar <code>"No Definido"</code>, <code>"no definido"</code> y vacios como ausentes, no como texto</td></tr><tr><td>RNF-08</td><td>Trazabilidad</td><td>Registrar de cada corrida</td><td>Fecha, procesos bajados, procesos entregados y URL base consultada</td></tr><tr><td>RNF-09</td><td>Escalabilidad</td><td>Soportar mas clientes</td><td>El perfil ya es un parametro; el costo marginal por cliente es bajo</td></tr><tr><td>RNF-10</td><td>Costo</td><td>Mantener el costo variable cerca de cero</td><td>API de datos gratis; unica variable, la inferencia del modelo</td></tr></tbody></table>
+<p>RNF-07 tiene un caso concreto que ya costo una iteracion: <code>departamento_entidad</code> llega como <code>"No Definido"</code> en parte de los registros. Si se compara contra una lista de departamentos sin filtrar ese sentinel, el ajuste geografico nunca se concede.</p>
+<h2>2.3 Requisitos tecnicos</h2>
+<table><thead><tr><th>Elemento</th><th>Especificacion</th></tr></thead><tbody><tr><td>Lenguaje</td><td>Python 3.11 o superior</td></tr><tr><td>Dependencias</td><td><strong>Ninguna externa.</strong> <code>urllib</code>, <code>csv</code>, <code>json</code>, <code>datetime</code></td></tr><tr><td>Fuente de datos</td><td><code>https://www.datos.gov.co/resource/p6dx-8zbt.json</code> (Socrata / SoQL)</td></tr><tr><td>Autenticacion</td><td>Ninguna. El dataset es publico</td></tr><tr><td>Modelo de lenguaje</td><td>Gemini (<code>gemini-2.5-flash</code>) o Gemma, invocado por API</td></tr><tr><td>Salidas</td><td>CSV, Markdown, PDF</td></tr><tr><td>Persistencia</td><td>Archivos locales versionables; <code>git</code> para el historico</td></tr><tr><td>Plataforma objetivo</td><td>Windows, Linux o macOS, sin instalacion</td></tr></tbody></table>
+<p>La decision de no usar <code>pandas</code> ni <code>requests</code> es deliberada: elimina el paso de crear un entorno virtual, que es donde mas se abandona un proyecto pequeno.</p>
+<h2>2.4 Requisitos de negocio</h2>
+<table><thead><tr><th>ID</th><th>Requisito</th></tr></thead><tbody><tr><td>RN-01</td><td>Alcance del contrato: el servicio entrega priorizacion, <strong>no</strong> garantiza adjudicacion</td></tr><tr><td>RN-02</td><td>El cliente es responsable de la decision de presentar y del contenido de la postulacion</td></tr><tr><td>RN-03</td><td>El cliente mantiene actualizado su perfil (certificaciones, zona, rango)</td></tr><tr><td>RN-04</td><td>Funcionamiento de la fuente: si datos.gov.co cambia el schema, el servicio se pausa y se notifica</td></tr><tr><td>RN-05</td><td>Formato de entrega: informe semanal en dia acordado</td></tr></tbody></table>
+<h2>2.5 Requisitos legales y de cumplimiento</h2>
+<table><thead><tr><th>ID</th><th>Requisito</th><th>Fundamento</th></tr></thead><tbody><tr><td>RL-01</td><td>Uso exclusivo de datos publicos, sin scrapeo de sitios que lo prohban</td><td>Los datos de SECOP en datos.gov.co son publicos y de dominio publico</td></tr><tr><td>RL-02</td><td>No incluir datos personales de personas naturales en los informes</td><td>Ley 1581 de 2012 (Habeas Data)</td></tr><tr><td>RL-03</td><td>Publicar el origen y la fecha de cada dato usado</td><td>Ley 1712 de 2014 (transparencia y acceso a la informacion)</td></tr><tr><td>RL-04</td><td>Consentimiento expreso del cliente para tratar su informacion comercial</td><td>Ley 1581 de 2012</td></tr><tr><td>RL-05</td><td>No usar el servicio para identificar ni contactar personas naturales</td><td>Proteccion de datos personales</td></tr><tr><td>RL-06</td><td>Conservar trazabilidad de que dato se consulto y cuando</td><td>Permite auditar y defender el origen de una cifra</td></tr></tbody></table>
+<p><strong>Sobre el tratamiento de personas naturales.</strong> El dataset contiene campos como <code>nombre_del_proveedor</code> y <code>documento_proveedor</code>, que identifican a personas. El servicio <strong>no los expone al cliente</strong>: se usan solo como referencia agregada de "quien compite" y se omiten del informe. Esta exclusion es deliberada y debe mantenerse aunque parezca perdida de informacion.</p>
+<p>Un segundo punto, relacionado con la reputacion: los campos del adjudicatario a veces traen errores de transcripcion. Publicar nombres propios a partir de datos sucios es una via directa paraWidget un error judicial o comercial, asi que el informe debe mostrar el valor <strong>tal como aparece en la fuente</strong>, con la fecha de consulta, y nunca "corregirlo" por cuenta propia.</p>
+<h2>2.6 Fuera de alcance (version 1)</h2>
+<ul>
+<li>Presentacion automatica de la postulacion.</li>
+<li>Lectura y analisis del pliego en PDF.</li>
+<li>Integracion con SECOP para inscribedjarse como proveedor.</li>
+<li>Prediccion probabilistica de adjudicacion.</li>
+<li>Aplicacion movil.</li>
+</ul>
+<div style="page-break-before:always"></div>
+<h1>3. Arquitectura, datos y limitaciones tecnicas</h1>
+<blockquote>Documento tecnico. Todo lo que aparece aqui fue <strong>verificado ejecutando</strong> el motor contra la API real de datos.gov.co, no consultado en teoria.</blockquote>
+<h2>3.1 La fuente de datos</h2>
+<p>El servicio se apoya en el portal de datos abiertos del Estado Colombiano, en el dataset <strong><code>p6dx-8zbt</code> — "SECOP II - Procesos de Contratacion"</strong>.</p>
+<table><thead><tr><th>Propiedad</th><th>Valor</th></tr></thead><tbody><tr><td>Endpoint</td><td><code>https://www.datos.gov.co/resource/p6dx-8zbt.json</code></td></tr><tr><td>API key</td><td><strong>No requiere.</strong> Es el activo comercial del producto</td></tr><tr><td>Costo</td><td>$0</td></tr><tr><td>Licencia</td><td>Datos publicos de dominio público</td></tr><tr><td>Actualizacion</td><td>Diaria por parte de la Plataforma Nacional de Contratacion</td></tr></tbody></table>
+<p>Consultar la API publica del Estado es lo que separa este servicio de un scraper comercial que cobra licencia y se cae cuando cambian el HTML.</p>
+<h2>3.2 Hallazgo critico: el dataset equivocado</h2>
+<p>El primer dataset localizado, <code>w3du-xuur</code> ("SECOP Integrado"), <strong>parecia</strong> servir y <strong>no sirve</strong>. Medicion real sobre 200 procesos abiertos:</p>
+<pre><code>objeto_a_contratar  -&gt;  &quot;no definido&quot;  en 200 de 200 registros</code></pre>
+<p>Ese dataset solo tiene el texto del objeto <strong>despues de adjudicado</strong>. Como la prospectacion ocurre antes, cualquier producto construido sobre el se queda sin texto que filtrar. Un proveedor que no mida esto se rompe en la demo del cliente.</p>
+<p>El dataset correcto expone ademas un campo de estado limpio:</p>
+<pre><code>estado_de_apertura_del_proceso = &#x27;Abierto&#x27;</code></pre>
+<p>En vez de interpretar cadenas de texto como <code>"Convocado"</code>, <code>"En ejecucion"</code> o <code>"terminado"</code>, que es fragile y dependia del idioma.</p>
+<h2>3.3 Campos utilizados</h2>
+<table><thead><tr><th>Campo</th><th>Uso en el producto</th></tr></thead><tbody><tr><td><code>estado_de_apertura_del_proceso</code></td><td>Filtro de procesos abiertos</td></tr><tr><td><code>descripci_n_del_procedimiento</code></td><td>Texto del objeto (matching por sector)</td></tr><tr><td><code>nombre_del_procedimiento</code></td><td>Referencia corta</td></tr><tr><td><code>precio_base</code></td><td>Ajuste por presupuesto</td></tr><tr><td><code>departamento_entidad</code>, <code>ciudad_entidad</code></td><td>Ajuste geografico</td></tr><tr><td><code>codigo_principal_de_categoria</code></td><td>Codigo UNSPSC: sector exacto</td></tr><tr><td><code>modalidad_de_contratacion</code></td><td>Segmentacion (licitacion, minima cuantia, directo)</td></tr><tr><td><code>conteo_de_respuestas_a_ofertas</code></td><td>Intensidad de competencia</td></tr><tr><td><code>fecha_de_publicacion_del</code></td><td>Antiguedad y urgencia</td></tr><tr><td><code>urlproceso</code></td><td>Enlace directo al pliego en SECOP</td></tr></tbody></table>
+<p><code>codigo_principal_de_categoria</code> es la pieza mas valiosa: al ser un codigo UNSPSC (por ejemplo <code>V1.80111500</code>), permite filtrar por sector sin depender de palabras clave en español libre. Es la diferencia entre un filtro que funciona y uno que se rompe con cada abreviatura.</p>
+<h2>3.4 Arquitectura</h2>
+<pre><code>  datos.gov.co (Socrata)
+          |
+          |  consulta estructurada, sin scraping
+          v
+  +--------------------------------+
+  |  Motor de consulta (radar.py)  |
+  |  - filtro estado = &#x27;Abierto&#x27;   |
+  |  - normaliza texto             |
+  |  - calcula puntaje             |
+  +--------------------------------+
+          |
+          +--&gt; Puntaje 0-100 + razones
+          |
+          v
+  +--------------------------------+
+  |  Capa de agente (LLM)         |
+  |  - limpia nombres sucios       |
+  |  - extrae requisitos tecnicos  |
+  |  - contrasta con la empresa    |
+  |  - redacta memoria tecnica     |
+  +--------------------------------+
+          |
+          v
+   Informe semanal (PDF/CSV/email)</code></pre>
+<p>El motor determinista hace el filtrado grueso y barato. El modelo de lenguaje solo interviene donde el texto es ambiguo. Esa separacion es deliberada: un LLM no debe decidir quais de 500 procesos son relevantes, porque seria lento, caro y no reproducible.</p>
+<h2>3.5 Logica de puntaje</h2>
+<table><thead><tr><th>Criterio</th><th>Peso</th><th>Detalle</th></tr></thead><tbody><tr><td>Ajuste sectorial</td><td>60</td><td>Palabras clave + categoria UNSPSC</td></tr><tr><td>Zona geografica</td><td>20</td><td>Departamento en la zona de operacion</td></tr><tr><td>Encaje presupuestal</td><td>20</td><td><code>precio_base</code> dentro del rango del cliente</td></tr><tr><td>Sin oferentes</td><td>+10</td><td><em>(desactivado, ver 3.6)</em></td></tr><tr><td>Exceso de oferentes</td><td>-20</td><td>Cuando supera el umbral de competencia</td></tr><tr><td>Fuera de rango</td><td>-15</td><td>Contrato muy por encima del perfil</td></tr></tbody></table>
+<p><strong>Por que importa el ultimo criterio.</strong> La mayoria de los agentes de prospection muestran todo. El valor esta en <strong>descartar</strong>: si van 40 oferentes, la probabilidad real es baja y el cliente pierde su tiempo. Descartar es lo que se vende.</p>
+<h2>3.6 Limitaciones conocidas</h2>
+<p>Estas estan documentadas a proposito. Son el mapa de lo que falta por construir.</p>
+<table><thead><tr><th>#</th><th>Limitacion</th><th>Impacto</th><th>Mitigacion</th></tr></thead><tbody><tr><td>L-1</td><td><code>conteo_de_respuestas_a_ofertas</code> llega en <strong>0</strong> mientras el proceso esta abierto</td><td>La regla "+10 sin oferentes" no distingue nada</td><td>Calcular competencia con la entidad y el historico de adjudicaciones</td></tr><tr><td>L-2</td><td><code>nombre_del_procedimiento</code> llega sucio: <code>"OSCAR JOSE CORTES RIVERO"</code>, <code>"31117 copia"</code>, <code>"021-2023"</code></td><td>Falsos positivos</td><td>Normalizar con LLM + validar contra <code>descripci_n_del_procedimiento</code></td></tr><tr><td>L-3</td><td>Matching por subcadena produce falsos positivos: <code>"intervencion"</code> matchea <em>"intervenciones de coordinacion"</em> de enfermeria</td><td>Falsos positivos</td><td>Anadir categoria UNSPSC como filtro deSupport</td></tr><tr><td>L-4</td><td><code>departamento_entidad</code> puede venir como <code>"No Definido"</code></td><td>Pierde el ajuste geografico</td><td>Heredar del <code>departamento_entidad</code> de la entidad, via tabla de entidades</td></tr><tr><td>L-5</td><td>Los procesos interadministrativos no tienen objeto ni detalle de lotes</td><td>Oportunidades perdidas</td><td>Segundo barrido sobre contratos del adjudicatario</td></tr><tr><td>L-6</td><td>El barrido trae 500 registros por corrida</td><td>Cobertura parcial</td><td>Paginar con <code>$offset</code> para cubrir el historico completo</td></tr></tbody></table>
+<p>La limitacion L-3 se observo en la ejecucion real: aparecio <em>"apoyo tecnico en obra"</em> con puntaje 45 y tambien <em>"intervenciones de coordinacion con otros sectores"</em> de enfermeria con el mismo puntaje. Un filtro por subcadena no distingue un oficio de otro.</p>
+<h2>3.7 Verificacion ejecutada</h2>
+<pre><code>[1/2] Descargando procesos ABIERTOS...
+  500 procesos abiertos encontrados
+[2/2] Analizando contra el perfil...
+  13 relevantes</code></pre>
+<p>Salida real del 25/09/2026, con el perfil de una constructora (palabras clave de obra civil, acueducto, vivienda; zonas Antioquia, Cundinamarca, Bogota; rango 80M-8.000M COP). El motor produjo 13 oportunidades con enlace directo al pliego y genero <code>oportunidades.csv</code>.</p>
+<h2>3.8 Pila tecnica</h2>
+<table><thead><tr><th>Componente</th><th>Eleccion</th><th>Motivo</th></tr></thead><tbody><tr><td>Lenguaje</td><td>Python 3.11+</td><td>Ecosistema de datos y de IA</td></tr><tr><td>Dependencias</td><td><strong>Solo biblioteca estandar</strong> (<code>urllib</code>, <code>csv</code>, <code>json</code>)</td><td>Cero friccion de instalacion, portabilidad a cualquier equipo</td></tr><tr><td>Fuente de datos</td><td>Socrata / SoQL</td><td>Consultas estructuradas, sin scraping</td></tr><tr><td>Modelo de lenguaje</td><td>Gemini / Gemma</td><td>Clasificacion y extraccion sobre texto ambiguo</td></tr><tr><td>Salida</td><td>CSV + PDF</td><td>Formato que el cliente ya usa</td></tr><tr><td>Persistencia</td><td>Archivo local + Sheets</td><td>Suficiente para el volumen actual</td></tr></tbody></table>
+<p>El motor no necesita <code>requests</code> ni <code>pandas</code> a proposito: con <code>urllib</code> el script funciona en cualquier Python instalado, sin crear un entorno virtual. Eso importa cuando el cliente quiere correrlo en su propio equipo.</p>
+<div style="page-break-before:always"></div>
+<h1>4. Plan de negocios</h1>
+<h2>4.1 Que se vende</h2>
+<p>No se vende un agente de inteligencia artificial. Se vende <strong>dejar de perder licitaciones que no se pueden ganar</strong>.</p>
+<p>La distincion importa porque el cliente final no sabe lo que es un agente, y porque "IA" suena a proyecto caro, lento y riesgoso. Lo que suena a negocio es una frase con numeros: <strong>"te digo cuales puedes ganar y a cuanto le esta pagando tu competencia"</strong>.</p>
+<h2>4.2 Las tres capas del valor</h2>
+<table><thead><tr><th>Capa</th><th>Lo que hace</th><th>Por que se paga</th></tr></thead><tbody><tr><td><strong>Filtro</strong></td><td>Descarta lo que no puedes ganar</td><td>Ahorra el tiempo del equipo comercial, que es el recurso mas caro</td></tr><tr><td><strong>Puntaje</strong></td><td>Ordena lo que si por probabilidad</td><td>Convierte Unlimited en una lista corta y accionable</td></tr><tr><td><strong>Benchmark</strong></td><td>Precio que pago la competencia, por municipio y objeto</td><td>Permite definir la oferta de forma estrategica</td></tr></tbody></table>
+<p>La tercera capa es la que nadie mas ofrece, y la que justifica un precio sostenido en vez de un proyecto de una vez.</p>
+<h2>4.3 Precios</h2>
+<table><thead><tr><th>Plan</th><th>Precio COP</th><th>Que incluye</th></tr></thead><tbody><tr><td><strong>Pilotaje</strong></td><td>$900.000 (unica vez)</td><td>Radar afinado al perfil del cliente + 30 dias de hallazgos + una sesion de capacitacion</td></tr><tr><td><strong>Mensual</strong></td><td>$450.000 / mes</td><td>Informe semanal, hasta 3 sectores y 5 departamentos, benchmark de competencia</td></tr><tr><td><strong>Por oportunidad</strong></td><td>$180.000 por proceso</td><td>Solo las oportunidades que el cliente decida pursuit, sin mensualidad</td></tr></tbody></table>
+<p>La estructura es de <strong>servicio empaquetado</strong>, no cobro por horas. Se cobra por resultado entregado, que es lo unico que el cliente puede comparar.</p>
+<h2>4.4 Economia unitaria</h2>
+<p>Con un solo cliente en plan mensual:</p>
+<table><thead><tr><th>Concepto</th><th>Valor COP</th></tr></thead><tbody><tr><td>Ingreso mensual</td><td>450.000</td></tr><tr><td>Costo de API (Socrata, publica)</td><td>0</td></tr><tr><td>Costo de inferencia (LLM)</td><td>~15.000 (estimado, tokens de clasificacion)</td></tr><tr><td>Tiempo de operacion</td><td>~4 horas/mes</td></tr><tr><td>Margen bruto estimado</td><td>~96% antes de mano de obra</td></tr></tbody></table>
+<p>El margen es alto porque el insumo principal —los datos— es publico y gratuito. El costo real es el tiempo de calibrate el perfil de cada cliente, que es donde entra el criterio que después se cobra.</p>
+<h2>4.5 Segmento objetivo</h2>
+<p><strong>Primario.</strong> Constructoras y empresas de ingenieria de 20 a 200 empleados, con cartera de obra publica y sin area de licitaciones dedicada. Para ellas, leer 200 paginas de pliego por proceso es un costo de oportunidad real.</p>
+<p><strong>Secundario.</strong> Consultoras de ingenieria, empresas de acueducto y alcantarillado, intermediarios de subcontractistas, y consultores ambientales que conformen equipos de postulacion.</p>
+<p><strong>Excluido deliberadamente.</strong> Grandes constructoras con area de licitaciones propia: tienen el equipo, no te compran.</p>
+<h2>4.6 El mensaje de venta</h2>
+<blockquote>Don Fernando, esta semana encontre 6 procesos abiertos de construccion en Antioquia y Cundinamarca, por $2.300 millones en total. Tres los esta llevando una empresa de Bogota y una de Pereira: le paso a quien se los adjudicaron y por cuanto. Dos no tienen ninguna oferta recibida todavia. Le armamos la postulacion a esas dos?</blockquote>
+<p>El mensaje abre con cifras concretas del negocio del cliente, no con tecnologia. Cierra con una accion, no con una pregunta abierta.</p>
+<h2>4.7 Por que es dificil de copiar</h2>
+<table><thead><tr><th>Barrera</th><th>Detalle</th></tr></thead><tbody><tr><td><strong>Conocimiento del dato</strong></td><td>Saber que <code>p6dx-8zbt</code> sirve y <code>w3du-xuur</code> no, y que <code>estado_de_apertura_del_proceso</code> evita interpretar cadenas de texto</td></tr><tr><td><strong>Calibracion por cliente</strong></td><td>El perfil de cada empresa se ajusta con la experiencia de los anteriores. No es codigo, es tiempo</td></tr><tr><td><strong>Historico de adjudicaciones</strong></td><td>El benchmark de precio se construye con meses de datos acumulados</td></tr><tr><td><strong>Relacion, no software</strong></td><td>El cliente compra que alguien se haga cargo</td></tr></tbody></table>
+<p>El codigo, por si solo, no es la barrera. Lo que no se copia en una tarde es haber descubierto que el dataset que todos usan no tiene el texto del objeto.</p>
+<h2>4.8 Via de entrada sugerida</h2>
+<ol>
+<li><strong>Prueba sin costo.</strong> Correr el motor con un perfil generico de construccion y</li>
+</ol>
+<p>   entregar 5 oportunidades reales al primer prospecto. Eso demuestra que el    producto funciona antes de cobrar un peso.</p>
+<ol>
+<li><strong>Piloto pagado.</strong> $900.000, con el perfil afinado a esa empresa concreta.</li>
+<li><strong>Suscripcion.</strong> Cuando el piloto produce al menos una postulacion presentada, se</li>
+</ol>
+<p>   convierte en mensual.</p>
+<p>El paso 3 es el unico que importa: el cliente no compra el software, compra que el software le genero una postulacion que presento.</p>
+<div style="page-break-before:always"></div>
+<h1>5. Cronograma, presupuesto y riesgos</h1>
+<h2>5.1 Cronograma</h2>
+<p>El proyecto se ejecuta en fases. Cada fase termina con algo que el cliente puede ver.</p>
+<table><thead><tr><th>Fase</th><th>Duracion</th><th>Entregable</th><th>Criterio de cierre</th></tr></thead><tbody><tr><td><strong>F0. Descubrimiento</strong></td><td>1 semana</td><td>Perfil del cliente, sectores, zonas, rango de presupuesto</td><td>El cliente firma el perfil por escrito</td></tr><tr><td><strong>F1. Motor v1</strong></td><td>1 semana</td><td><code>radar.py</code> corriendo, informe en consola y CSV</td><td>100 procesos abiertos descargados sin error</td></tr><tr><td><strong>F2. Calibracion</strong></td><td>2 semanas</td><td>Perfil afinado con los descartes del cliente</td><td>Precision (IND-03) &gt;= 70%</td></tr><tr><td><strong>F3. Piloto</strong></td><td>4 semanas</td><td>Informe semanal enviado, benchmark de precios</td><td>Al menos 1 oportunidad validada por el cliente</td></tr><tr><td><strong>F4. Consolidacion</strong></td><td>2 semanas</td><td>Capa de LLM para limpieza y clasificacion</td><td>Menos de 2 falsos positivos por semana</td></tr><tr><td><strong>F5. Producto</strong></td><td>Continuo</td><td>Mejora de cobertura, paginacion, historico</td><td>Precision &gt;= 85% sostenido</td></tr></tbody></table>
+<p><strong>F0 a F2 suman cuatro semanas antes de cobrar la primera mensualidad.</strong> Es la inversion inicial del proveedor, no del cliente. Por eso el pilotaje se cobra por adelantado: cubre F0, F1 y parte de F2.</p>
+<h2>5.2 Presupuesto de arranque</h2>
+<p>Costos del proyecto, no del cliente:</p>
+<table><thead><tr><th>Concepto</th><th>Valor COP</th><th>Observacion</th></tr></thead><tbody><tr><td>Dominio y correo profesional</td><td>0</td><td>Se usa Gmail al inicio</td></tr><tr><td>Infraestructura de ejecucion</td><td>0</td><td>Script local; el portal de datos es publico</td></tr><tr><td>Consumo de API de LLM</td><td>~40.000</td><td>Calibracion y limpieza de texto</td></tr><tr><td>Dominio <code>.com</code> (opcional)</td><td>45.000 anual</td><td>Solo si se empieza a marcar la marca</td></tr><tr><td>Tiempo propio</td><td>4 semanas</td><td>No</td><td>es facturado al cliente en esta fase</td></tr><tr><td><strong>Total en efectivo</strong></td><td><strong>~85.000 COP</strong></td><td></td></tr></tbody></table>
+<p>El presupuesto de arranque es deliberadamente bajo. El riesgo real del proyecto no es economico, es de tiempo: cuatro semanas de trabajo antes del primer ingreso.</p>
+<h3>inversion por cliente (fase de piloto)</h3>
+<table><thead><tr><th>Concepto</th><th>Valor COP</th></tr></thead><tbody><tr><td>Pilotaje (F0-F2)</td><td>900.000</td></tr><tr><td>Mensualidad (F3-F5)</td><td>450.000 / mes</td></tr></tbody></table>
+<h2>5.3 Punto de equilibrio</h2>
+<p>Con un coste operativo estimado de 350.000 COP/mes (tiempo de calibracion y soporte) y un precio de 450.000:</p>
+<pre><code>Clientes para equilibrio = 350.000 / 450.000 = 0,78  -&gt;  1 cliente</code></pre>
+<p>El equilibrio lo alcanza <strong>un solo cliente</strong>. Eso significa que el riesgo del negocio no es economico sino comercial: si no se vende, no hay proyecto. Y tambien significa que el segundo cliente es casi margen completo.</p>
+<h2>5.4 Riesgos</h2>
+<table><thead><tr><th>ID</th><th>Riesgo</th><th>Probabilidad</th><th>Impacto</th><th>Mitigacion</th><th>Senal temprana</th></tr></thead><tbody><tr><td>R-01</td><td>El cliente no compra porque "no es IA, es un filtro"</td><td>Media</td><td>Alto</td><td>Enfatizar el benchmark de precios, que es informacion que el cliente no tiene</td><td>Rechaza el piloto sin preguntas</td></tr><tr><td>R-02</td><td>El perfil del cliente se calibra mal y llegan falsos positivos</td><td><strong>Alta</strong> (ya ocurrio)</td><td>Medio</td><td>Mostrar tambien los descartes con su causa; el cliente corrige el perfil</td><td>Queja de "esto no me sirve"</td></tr><tr><td>R-03</td><td>El campo de competencia sigue en 0 y no se puede medir</td><td><strong>Alta</strong> (ya ocurrio)</td><td>Medio</td><td>Calcular competencia historica por entidad y objeto</td><td>Todas las oportunidades con 0 oferentes</td></tr><tr><td>R-04</td><td>datos.gov.co cambia el schema o cae</td><td>Baja</td><td><strong>Alto</strong></td><td>Descargar copia local diaria; el motor debe funcionar sin conexion</td><td>Cambios en el nombre de los campos</td></tr><tr><td>R-05</td><td>El cliente espera ganarle una licitacion y no la gana</td><td>Media</td><td><strong>Alto</strong></td><td>Dejar por escrito que el servicio prioriza, no garantiza</td><td>"Esto no me sirvio" tras un mes</td></tr><tr><td>R-06</td><td>Un solo cliente consume todo el tiempo</td><td><strong>Alta</strong></td><td>Medio</td><td>Cobrar el piloto; nunca trabajar dos pilots a la vez</td><td>Mas de 8 horas/semana sin segundo ingreso</td></tr><tr><td>R-07</td><td>La API de LLM se encarece o cambia de precio</td><td>Baja</td><td>Medio</td><td>El motor funciona sin LLM; es una capa opcional</td><td>Cambios de precio del proveedor</td></tr><tr><td>R-08</td><td>Se confunde informacion publica con dato verificado</td><td>Media</td><td>Medio</td><td>Mostrar siempre la fecha de consulta y la fuente</td><td>Cliente cita un dato sin fecha</td></tr></tbody></table>
+<p><strong>R-05 es el riesgo que mas mata este negocio.</strong> Un cliente que contrata esperando adjudicaciones y recibe un buen informe pero no gana, se va y culpa al servicio. Por eso la clause "prioriza, no garantiza" tiene que estar en el contrato desde el primer dia, no como nota al pie.</p>
+<h2>5.5 Lo que haria distinto con mas tiempo</h2>
+<ol>
+<li><strong>Persistencia del historico</strong> para medir la precision del puntaje con datos</li>
+</ol>
+<p>   reales y no con la percepcion del cliente.</p>
+<ol>
+<li><strong>Competencia indirecta:</strong> quien gano procesos parecidos en la misma region.</li>
+</ol>
+<p>   Requiere un segundo barrido sobre el dataset de contratos.</p>
+<ol>
+<li><strong>Filtro por categoria UNSPSC</strong> como condicion obligatoria, para eliminar de raiz</li>
+</ol>
+<p>   los falsos positivos por subcadena.</p>
+<ol>
+<li><strong>Plantilla de memoria tecnica</strong> generada a partir de los requisitos del pliego.</li>
+</ol>
+<p>   Es la pieza que mas valor tiene y la mas cercana al cliente.</p>
+</body></html>

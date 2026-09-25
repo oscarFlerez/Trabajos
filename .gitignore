@@ -1,0 +1,13 @@
+# Salidas generadas por ejecucion
+oportunidades.csv
+*.pdf.tmp
+
+# Sistema
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# Editores
+.idea/
+.vscode/
+*.swp
