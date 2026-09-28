@@ -165,7 +165,7 @@ def pagina(ops, prec, marcados, error):
              "significa que encaja bien en su sector, su zona y su rango de presupuesto. "
              "Un 45 o menos es una coincidencia debil.</li>"
              "<li><b>La entidad</b> es quien contrata: el municipio, el hospital, el "
-             "departamento. Si no es una entidad a la que usted suele lestionar, "
+             "departamento. Si no es una entidad a la que usted suele licitar, "
              "probablemente no sea para usted.</li>"
              "<li><b>Por que aparece aqui</b> es el motivo del puntaje. Si ve "
              "<i>presupuesto encaja</i> o <i>zona objetivo</i>, esa es la razon.</li>"

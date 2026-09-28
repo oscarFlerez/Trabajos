@@ -78,6 +78,70 @@ def entero(valor, por_defecto=0):
         return por_defecto
 
 
+# --------------------------------------------------------------------------
+# LIMPIEZA DEL OBJETO
+# `nombre_del_procedimiento` a veces no es el objeto: trae el nombre de la
+# persona que firmo, o un codigo interno, o un texto vacio de sentido.
+# Ejemplos medidos en datos.gov.co:
+#     "OSCAR JOSE CORTES RIVERO"   (persona)
+#     "31117 copia"                (codigo interno)
+#     "021-2023"                   (solo el numero)
+#     "PRESTACION DE SERVICIOS"    (correcto pero no dice nada)
+# Cuando pasa eso se usa `descripci_n_del_procedimiento`, que si trae el objeto.
+# --------------------------------------------------------------------------
+
+# Si aparece alguna de estas, el nombre NO es el de una persona.
+NO_ES_PERSONA = (
+    "CONTRATO", "CONTRATACION", "PRESTACION", "PRESTA", "SERVICIO", "SERVICIOS",
+    "SUMINISTRO", "COMPRA", "VENTA", "OBRA", "CONSTRUCCION", "MANTENIMIENTO",
+    "INTERADMINISTRATIVO", "DIRECTO", "DIRECTA", "PROFESIONAL", "PROFESIONALES",
+    "APOYO", "GESTION", "SUMINISTRO DE", "DOTACION", "ALQUILER", "TRANSPORTE",
+    "CONSULTORIA", "INTERVENCION", "REHABILITACION", "MEJORAMIENTO", "AMPLIACION",
+    "COSTRUCCION", "ADQUISICION", "EVALUACION", "IMPLEMENTACION", "CAPACITACION",
+    "ARRENDAMIENTO", "REPARACION", "INSTALACION", "DISEÑO", "DISENO",
+)
+
+# Textos correctos pero que no sirven para decidir nada.
+GENERICOS = (
+    "PRESTACION DE SERVICIOS", "CONTRATO DE PRESTACION DE SERVICIOS",
+    "PRESTACION DE SERVICIOS PROFESIONALES", "CONTRATACION DIRECTA",
+    "CONTRATO INTERADMINISTRATIVO", "SERVICIOS", "PRESTACION", "CONTRATO",
+    "SUMINISTRO", "COMPRA", "SERVICIOS PROFESIONALES",
+)
+
+
+def objeto_limpio(f):
+    """Devuelve (texto, nota). El texto es el objeto tal como se debe mostrar."""
+    nom = (f.get("nombre_del_procedimiento") or "").strip()
+    desc = (f.get("descripci_n_del_procedimiento") or "").strip()
+
+    if not nom:
+        return (desc or "(sin objeto)"), "no venia nombre, se uso la descripcion"
+
+    # Solo numeros, guiones o la palabra "copia": es un codigo interno.
+    sin_numeros = nom.replace("COPIA", "").replace("copia", "").strip()
+    if sin_numeros and all(c in "0123456789- /." for c in sin_numeros):
+        if desc:
+            return desc, "el nombre era un codigo, se uso la descripcion"
+        return nom, "el nombre es un codigo y no hay descripcion"
+
+    # 2 a 6 palabras, casi todas en mayuscula, sin palabras institucionales
+    # ni verbos: es un nombre de persona.
+    tokens = [t for t in nom.split() if t]
+    if 2 <= len(tokens) <= 6:
+        mayusculas = sum(1 for t in tokens if t.isupper() and len(t) > 2)
+        tiene_verbos = any(k in nom.upper() for k in NO_ES_PERSONA)
+        if not tiene_verbos and mayusculas >= max(2, len(tokens) - 1):
+            if desc:
+                return desc, "el nombre traia una persona, se uso la descripcion"
+            return nom, "el nombre parece una persona y no hay descripcion"
+
+    # Correcto pero inutil: mejor la descripcion si es mas extensa.
+    if nom.upper().rstrip(" .") in [g.rstrip(" .") for g in GENERICOS] and desc:
+        return desc, "el nombre era generico, se uso la descripcion"
+
+    return nom, ""
+
 def puntuar(f, p):
     """(score 0-100, razones). 0 = descartado."""
     texto = ((f.get("nombre_del_procedimiento") or "") + " " +
@@ -156,7 +220,7 @@ def main():
     for i, f in enumerate(res[:TOP_N], 1):
         print("\n  {0}. [{1}/100]  {2}".format(i, f["_score"], f.get("referencia_del_proceso") or "?"))
         print("     Entidad    : " + (f.get("entidad") or "?")[:70])
-        print("     Que buscan : " + (f.get("nombre_del_procedimiento") or "?")[:140])
+        print("     Que buscan : " + objeto_limpio(f)[0][:140])
         pre = entero(f.get("precio_base"))
         print("     Presupuesto: " + ("$ " + "{:,.0f}".format(pre).replace(",", ".")
                                      if pre else "no publicado"))
@@ -175,7 +239,7 @@ def main():
         for f in res:
             w.writerow([f["_score"], f.get("referencia_del_proceso"), f.get("entidad"),
                         f.get("ciudad_entidad"), f.get("departamento_entidad"),
-                        f.get("nombre_del_procedimiento"), f.get("precio_base"),
+                        objeto_limpio(f)[0], f.get("precio_base"),
                         f.get("conteo_de_respuestas_a_ofertas"),
                         "; ".join(f["_razones"]), link_de(f)])
     print("\n  Guardado: " + salida)
@@ -189,7 +253,7 @@ def main():
         import historico
         payload = [{"referencia": f.get("referencia_del_proceso"),
                     "entidad": f.get("entidad"),
-                    "objeto": f.get("nombre_del_procedimiento"),
+                    "objeto": objeto_limpio(f)[0],
                     "departamento": f.get("departamento_entidad"),
                     "presupuesto": f.get("precio_base"),
                     "score": f["_score"],

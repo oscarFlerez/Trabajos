@@ -51,15 +51,68 @@ ejemplos/
   perfil_empresa.json   perfil de empresa de ejemplo
 ```
 
+## Arrancar la aplicacion
+
+Un solo comando hace todo: revisa el entorno, descarga los procesos, genera el
+informe y abre el panel.
+
+```bash
+python src/app.py
+```
+
+Salida real de una corrida:
+
+```
+==================================================================
+  RADAR DE LICITACIONES - aplicacion local
+==================================================================
+[1/3] Revisando que este todo en su sitio...
+      OK   Entorno correcto
+[2/3] Buscando procesos abiertos en SECOP...
+      OK   13 oportunidades, 5 de alta prioridad, $ 1.103.709.212 en juego (6s)
+[3/3] Preparando el informe...
+      OK   Informe semanal listo: informe-semanal.pdf
+==================================================================
+  LISTO
+  http://127.0.0.1:8765/
+==================================================================
+```
+
+Opciones:
+
+```bash
+python src/app.py --actualizar        # solo descarga datos y sale
+python src/app.py --sin-actualizar    # no baja datos, solo abre el panel
+python src/app.py --puerto 9000
+python src/app.py --sin-navegador
+```
+
+El paso 1 revisa que el entorno virtual y `pypdf` esten antes de empezar, y
+dice como instalarlos si faltan, en vez de fallar a mitad del trabajo.
+
+## Estructura
+
+```
+src/app.py           un solo comando: actualiza, informa y abre el panel
+src/panel.py         panel local en el navegador (lo que ve el cliente)
+src/radar.py          motor de deteccion (sin dependencias)
+src/requisitos.py     lector de pliegos (necesita pypdf)
+src/historico.py      registro y medicion de la precision
+src/informe.py        informe semanal en PDF
+historial.jsonl       bitacora append-only de cada corrida
+ejemplos/
+  pliego_ejemplo.txt    pliego de prueba
+  perfil_empresa.json   perfil de empresa de ejemplo
+```
+
 ## Para el cliente: el panel
 
 Los scripts de terminal son para quien construye esto. El area comercial de una
 constructora no va a instalar un entorno virtual, asi que el producto tiene una
-cara de navegador.
+cara de navegador. Un clic y ya:
 
 ```bash
-python src/radar.py      # actualiza los datos
-python src/panel.py      # abre http://127.0.0.1:8765 en el navegador
+python src/panel.py
 ```
 
 Que encuentra el cliente:
