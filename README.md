@@ -40,13 +40,66 @@ Documento consolidado en PDF: [Radar-de-Licitaciones.pdf](Radar-de-Licitaciones.
 ### Codigo
 
 ```
+src/panel.py         panel local en el navegador (lo que ve el cliente)
 src/radar.py          motor de deteccion (sin dependencias)
 src/requisitos.py     lector de pliegos (necesita pypdf)
 src/historico.py      registro y medicion de la precision
+src/informe.py        informe semanal en PDF
 historial.jsonl       bitacora append-only de cada corrida
 ejemplos/
   pliego_ejemplo.txt    pliego de prueba
   perfil_empresa.json   perfil de empresa de ejemplo
+```
+
+## Para el cliente: el panel
+
+Los scripts de terminal son para quien construye esto. El area comercial de una
+constructora no va a instalar un entorno virtual, asi que el producto tiene una
+cara de navegador.
+
+```bash
+python src/radar.py      # actualiza los datos
+python src/panel.py      # abre http://127.0.0.1:8765 en el navegador
+```
+
+Que encuentra el cliente:
+
+- **Una seccion "Como funciona esta aplicacion"** que explica en lenguaje llano
+  que hace, que significa el puntaje, y sobre todo **que NO hace**.
+- **Cuatro indicadores**: oportunidades, alta prioridad, valor en juego y
+  precision del filtro.
+- **La tabla de oportunidades** con color por prioridad y el motivo del puntaje.
+- **Dos botones por fila**: *Sirvio* y *No sirvio*. Es el unico dato que la
+  aplicacion necesita del cliente, y es lo que hace que la semana que viene
+  el filtro sea mas preciso. Un clic escribe en el historico y recalcula la
+  precision al instante.
+- **Pie con la advertencia** de que no garantiza adjudicacion.
+
+Es un servidor local en `127.0.0.1`: no se publica, no sale del equipo y no
+necesita internet despues de la primera actualizacion.
+
+Opciones utiles:
+
+```bash
+python src/panel.py --puerto 9000     # otro puerto
+python src/panel.py --sin-navegador  # no abrir el navegador automaticamente
+```
+
+#### Un bug que conviene conocer
+
+Las referencias de proceso traen espacios y signos: `IE. BTAJ 008 - 2024`,
+`3452 - 2026`, `31117 copia`. Al construir los enlaces hay que codificarlas con
+`quote(ref, safe="")`; si no, el espacio parte el query string y el clic **nunca
+llega al servidor**, pero el boton se ve bien. Fallo silencioso: el cliente
+pensa que marco y no se guardo nada.
+
+#### El flujo completo, de punta a punta
+
+```
+radar.py       baja los procesos abiertos y registra la corrida
+panel.py       el cliente los revisa y marca cual sirvio
+historico.py   calcula la precision real y que palabras clave sirven
+informe.py     genera el PDF semanal para enviarlo
 ```
 
 ### Uso del detector
