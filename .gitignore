@@ -1,6 +1,13 @@
 # Salidas generadas por ejecucion
 oportunidades.csv
+analisis_pliego.json
 *.pdf.tmp
+
+# Entornos virtuales (no deben subirse)
+.venv/
+venv/
+__pycache__/
+*.pyc
 
 # Sistema
 Thumbs.db

@@ -39,12 +39,14 @@ Documento consolidado en PDF: [Radar-de-Licitaciones.pdf](Radar-de-Licitaciones.
 ### Codigo
 
 ```
-src/radar.py
+src/radar.py          motor de deteccion (sin dependencias)
+src/requisitos.py     lector de pliegos (necesita pypdf)
+ejemplos/
+  pliego_ejemplo.txt    pliego de prueba
+  perfil_empresa.json   perfil de empresa de ejemplo
 ```
 
-Sin dependencias externas. Solo biblioteca estandar de Python.
-
-### Uso
+### Uso del detector
 
 ```bash
 python src/radar.py
@@ -63,6 +65,57 @@ Antes de la primera corrida, editar el bloque `PERFIL` al inicio del archivo:
 
 Salida: informe por consola y `oportunidades.csv`.
 
+### Uso del lector de pliegos
+
+Esta es la pieza que mas valor tiene: no resume el pliego, responde **"puedo
+presentar esto o no"**, y si no, **que me falta**.
+
+```bash
+# 1. Instalar la unica dependencia
+uv venv .venv
+uv pip install --python .venv/Scripts/python.exe pypdf
+
+# 2. Correr
+.venv\Scripts\python.exe src/requisitos.py --pliego ejemplos/pliego_ejemplo.txt --empresa ejemplos/perfil_empresa.json
+```
+
+Que hace, en orden:
+
+1. Extrae del pliego los requisitos exigidos (habilitantes, certificaciones,
+   capacidad financiera, experiencia, garantias, propuesta, ejecucion).
+2. Marca cada uno como **critico** si incumplirlo descalifica.
+3. Los cruza contra el perfil JSON de la empresa.
+4. Para los campos financieros **compara la cifra**, no solo la existencia.
+5. Emite veredicto: `POSTULAR`, `REVISAR ANTES DE POSTULAR` o `NO PRESENTAR`.
+
+Salida por consola mas `analisis_pliego.json` para el informe semanal.
+
+#### Perfiles de empresa
+
+El perfil es lo que se calibra por cliente. Copiar `ejemplos/perfil_empresa.json`:
+
+| Regla | Significado |
+|---|---|
+| `true`, o un numero > 0, o texto no vacio | La empresa **lo tiene** |
+| `false`, `0`, `""`, `"no"`, `"pendiente"` | **No lo tiene** |
+| Campo **ausente** | `NO SE SABE`: hay que confirmarlo antes de decidir |
+
+Un campo ausente nunca se reporta como cumplido. Es deliberado: es preferible
+marcar `NO SE SABE` que afirmar un `CUMPLE` que descalifica en la apertura.
+
+#### Limitaciones conocidas
+
+- **Un pliego escaneado no tiene capa de texto.** El lector lo detecta y avisa:
+  necesita OCR antes. No devuelve texto vacio en silencio.
+- **El indice de liquidez si se compara** contra la cifra del pliego.
+- **El patrimonio y los ingresos solo se comparan si el pliego escribe la cifra en
+  numeros.** Si la redacta con palabras ("tres mil millones"), el resultado es
+  `NO SE SABE` y hay que compararlo a mano. Es preferible asi que suponer que
+  cumple.
+- La biblioteca de requisitos cubre lo habitual en obra publica. Un pliego con
+  redaccion muy atypica se detecta como "sin requisitos"; la solucion es agregar
+  el patron a `REQUISITOS` en el propio archivo.
+
 ### Verificacion
 
 La ultima ejecucion real (25/09/2026) con un perfil de constructora:
@@ -80,7 +133,10 @@ La ultima ejecucion real (25/09/2026) con un perfil de constructora:
 | Puntaje con razones explicitas | Competencia real (el campo llega en 0) |
 | Exportacion CSV y enlace al pliego | Limpieza de textos sucios con LLM |
 | Referencia de precios | Persistencia del historico |
-| — | Lectura del pliego y extraccion de requisitos |
+| **Lectura del pliego y extraccion de requisitos** | OCR para pliegos escaneados |
+| **Cruce contra el perfil y veredicto** | Comparar patrimonio cuando el pliego lo escribe con palabras |
+| **Comparacion de cifras financieras** | Catalogar mas patrones de requisitos |
+| **Deteccion de PDF sin capa de texto** | Descarga automatica del pliego desde SECOP |
 
 ### Riesgo tecnico principal
 
@@ -88,6 +144,13 @@ El campo `conteo_de_respuestas_a_ofertas` llega en **0** mientras el proceso est
 abierto, asi que la regla de "poca competencia" no discrimina. Esta resuelto en el
 motor pero **desactivado** de forma consciente hasta tener una fuente real de
 competencia.
+
+### El pliego no se puede bajar de SECOP
+
+`community.secop.gov.co` resetea la conexion a clientes que no son navegador.
+Medido el 27/09/2026 por tres vias distintas (Node `fetch`, `webfetch` y
+`curl.exe`): las tres reciben *connection reset*. Por eso el lector de pliegos
+trabaja sobre el archivo que el cliente ya descargo, y no intenta descargarlo.
 
 ### Fuente de datos
 

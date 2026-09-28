@@ -1,0 +1,30 @@
+{
+  "nombre": "Constructora Ejemplo S.A.S.",
+  "_comentario": "Perfil de ejemplo. Copiar y ajustar por cliente. Un valor numerico mayor que 0 cuenta como 'lo tiene'; para los campos financieros el lector compara la cifra contra la que exige el pliego.",
+
+  "rup": true,
+  "antecedentes": true,
+  "iso_9001": true,
+  "iso_14001": false,
+  "iso_45001": true,
+  "iso_27001": false,
+  "sgs": false,
+  "kope": "CO-123456",
+
+  "patrimonio": "$850.000.000",
+  "indice_liquidez": 2.4,
+  "utilidad_neta": "$190.000.000",
+  "ingresos_brutos": "$2.400.000.000",
+
+  "experiencia_anios": 12,
+  "contratos_previos": 6,
+  "profesionales_matriculados": true,
+
+  "poliza_cumplimiento": true,
+  "garantia_estabilidad": "18 meses",
+  "garantia_seriedad": true,
+
+  "pesst": true,
+  "licencia_construccion": true,
+  "plan_trabajo": true
+}
