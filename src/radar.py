@@ -15,6 +15,7 @@ Dataset: p6dx-8zbt "SECOP II - Procesos de Contratacion"
 
 import csv
 import json
+import os
 import sys
 import urllib.parse
 import urllib.request
@@ -178,6 +179,31 @@ def main():
                         f.get("conteo_de_respuestas_a_ofertas"),
                         "; ".join(f["_razones"]), link_de(f)])
     print("\n  Guardado: " + salida)
+
+    # --- Registro en el historico -------------------------------------------
+    # Sin esto no hay forma de saber si el filtro acierta. El cliente marca
+    # despues cada oportunidad como util o descartada, y de ahi sale la
+    # calibracion real del PERFIL.
+    try:
+        sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+        import historico
+        payload = [{"referencia": f.get("referencia_del_proceso"),
+                    "entidad": f.get("entidad"),
+                    "objeto": f.get("nombre_del_procedimiento"),
+                    "departamento": f.get("departamento_entidad"),
+                    "presupuesto": f.get("precio_base"),
+                    "score": f["_score"],
+                    "razones": f["_razones"]} for f in res]
+        criterios = {"departamentos": PERFIL["departamentos"],
+                     "precio_min": PERFIL["precio_min"],
+                     "precio_max": PERFIL["precio_max"],
+                     "palabras_clave": PERFIL["palabras_clave"]}
+        n, _ = historico.registrar(payload, PERFIL["empresa"], criterios)
+        print("  Historico: " + str(n) + " oportunidades registradas")
+        print("  Revision de acierto:  python src/historico.py --reporte")
+    except Exception as exc:
+        print("  (aviso: no se pudo registrar en el historico: " + str(exc) + ")")
+
     print("")
     return 0
 

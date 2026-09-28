@@ -33,6 +33,7 @@ licitó tu competencia**. La segunda parte es la que justifica un precio sosteni
 | [03 Arquitectura y datos](docs/03-arquitectura-y-datos.md) | Fuente de datos, hallazgos, arquitectura, logica de puntaje, limitaciones |
 | [04 Plan de negocios](docs/04-plan-de-negocios.md) | Propuesta de valor, precios, economia unitaria, mensaje de venta |
 | [05 Cronograma, presupuesto y riesgos](docs/05-cronograma-presupuesto-y-riesgos.md) | Fases, costos, punto de equilibrio, tabla de riesgos |
+| [06 El filtro UNSPSC no sirve](docs/06-unspsc-no-sirve.md) | Decision tecnica: por que se descarto un filtro que parecia correcto |
 
 Documento consolidado en PDF: [Radar-de-Licitaciones.pdf](Radar-de-Licitaciones.pdf)
 
@@ -41,6 +42,8 @@ Documento consolidado en PDF: [Radar-de-Licitaciones.pdf](Radar-de-Licitaciones.
 ```
 src/radar.py          motor de deteccion (sin dependencias)
 src/requisitos.py     lector de pliegos (necesita pypdf)
+src/historico.py      registro y medicion de la precision
+historial.jsonl       bitacora append-only de cada corrida
 ejemplos/
   pliego_ejemplo.txt    pliego de prueba
   perfil_empresa.json   perfil de empresa de ejemplo
@@ -89,6 +92,41 @@ Que hace, en orden:
 5. Emite veredicto: `POSTULAR`, `REVISAR ANTES DE POSTULAR` o `NO PRESENTAR`.
 
 Salida por consola mas `analisis_pliego.json` para el informe semanal.
+
+### Medir si el filtro acierta
+
+El radar registra solo cada corrida. Lo que falta es saber si lo que sirvio
+**sirvio de verdad**, y eso lo dice el cliente. El ciclo es de tres comandos:
+
+```bash
+# 1. el radar ya registro la corrida solo, al terminar
+python src/radar.py
+
+# 2. el cliente marca cada oportunidad cuando la revisa
+python src/historico.py --marcar FNV-001-2021 --util
+python src/historico.py --marcar 021-2023 --descartado "fuera de la zona"
+
+# 3. la precision, y sobre todo el rendimiento de cada palabra clave
+python src/historico.py --reporte
+```
+
+Primera corrida real (28/09/2026), 13 oportunidades de 500 procesos abiertos:
+
+```
+palabra        util  desc  pend  precision
+acueducto        1     0     1      100%
+vivienda         1     1     3       50%
+intervencion     0     1     3        0%   <- a quitar del PERFIL
+construccion     0     0     1   sin dato
+```
+
+`intervencion` con 0% es exactamente el falso positivo que se habia detectado a
+ojo. Aqui sale del dato, no de la intuicion. Con 3 o mas casos marcados, el
+reporte dice que palabras **aciertan siempre** y cuales **solo generan ruido** y
+conviene borrar del `PERFIL`.
+
+El archivo `historial.jsonl` es append-only y va al repositorio, asi que la
+bitacora queda versionada y comparable entre semanas.
 
 #### Perfiles de empresa
 
