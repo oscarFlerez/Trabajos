@@ -128,6 +128,46 @@ conviene borrar del `PERFIL`.
 El archivo `historial.jsonl` es append-only y va al repositorio, asi que la
 bitacora queda versionada y comparable entre semanas.
 
+### El informe semanal
+
+El radar produce un CSV y el lector produce un JSON. Ninguno de los dos se
+vende: lo que se vende es el informe que el cliente abre el lunes.
+
+```bash
+python src/informe.py --cliente "Constructora Ejemplo S.A.S."
+```
+
+Junta las tres salidas (`oportunidades.csv`, `analisis_pliego.json` e
+`historial.jsonl`) y arma un PDF de dos paginas con:
+
+- **Resumen** en KPI: cuantas oportunidades, cuantas de alta prioridad, valor en juego.
+- **Precision acumulada** del filtro, si ya hay veredictos del cliente.
+- **Analisis del pliego** con el veredicto y la lista de lo que falta.
+- **Detalle** de las 15 mejores, con codigo de color segun prioridad.
+- **Que hacer esta semana**: tres acciones concretas, no una lista de datos.
+- Pie con la fuente, la fecha de consulta y el aviso de que no garantiza adjudicacion.
+
+El texto esta escrito en lenguaje de negocio a proposito: el cliente no
+comprende datasets ni API, y el informe no menciona ninguno.
+
+#### Requisitos
+
+El PDF se genera con Chrome o Edge en modo headless, que ya viene en Windows.
+Si no se encuentra ninguno, el script lo dice y deja el HTML, que se puede
+imprimir a mano. Con `--html` ni siquiera intenta el PDF.
+
+Ultima ejecucion real (28/09/2026):
+
+```
+Oportunidades: 13    Alta prioridad: 5    Valor en juego: $ 1.103.709.212
+```
+
+#### Nota sobre el PDF y la distribucion
+
+El informe lleva en el pie la fecha de consulta y la advertencia de que no
+garantiza adjudicacion. Eso no es decoracion: es lo que separa un servicio de
+informacion de una promesa que despues genera una reclamacion.
+
 #### Perfiles de empresa
 
 El perfil es lo que se calibra por cliente. Copiar `ejemplos/perfil_empresa.json`:

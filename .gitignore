@@ -1,6 +1,8 @@
 # Salidas generadas por ejecucion
 oportunidades.csv
 analisis_pliego.json
+informe-semanal.html
+informe-semanal.pdf
 *.pdf.tmp
 
 # Entornos virtuales (no deben subirse)
