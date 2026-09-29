@@ -80,6 +80,24 @@ inventar una cifra. Un dato inventado en una licitacion cuesta dinero de verdad.
   haria falta.`;
 
 /* Perfil por defecto. El usuario puede ajustarlo desde la pantalla. */
+/* Contexto CORTO, para los enlaces que viajan en la direccion.
+   El completo son 3.477 caracteres: codificados en una URL pasan de 5.000 y
+   ninguna web los acepta. Este cabe y conserva lo esencial. */
+export const CONTEXTO_CORTO = `Asesoras a empresas de construccion en Colombia sobre licitaciones publicas
+(SECOP II, datos abiertos de datos.gov.co, dataset p6dx-8zbt).
+
+TRAMPAS MEDIDAS, no las ignores:
+- "Abierto" NO significa que se pueda licitar: hay 8.086.821 procesos asi y el
+  60,7% se publico antes de 2025. Filtra por fecha reciente.
+- El dataset NO tiene fecha de cierre. Dilo, no lo supongas.
+- La categoria UNSPSC no sirve para el sector: la obra civil se reparte en 156
+  codigos y el mas comun cubre solo el 14%. Lee el texto.
+- "conteo_de_respuestas_a_ofertas" llega en 0 mientras esta abierto.
+- "No Definido" y "UNSPECIFIED" son centinelas, no datos.
+
+Esta herramienta prioriza; no presenta la postulacion ni predice adjudicaciones.
+Si no sabes algo, dilo: un dato inventado en una licitacion cuesta dinero.`;
+
 export const PERFIL_POR_DEFECTO = {
   empresa: "Mi empresa",
   palabras_clave: [
