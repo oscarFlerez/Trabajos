@@ -102,7 +102,7 @@
        y el contexto ya en el cuadro. Si a alguna se le abre vacio, es que no acepta el
        parametro de la direccion; para esa usa <b>Copiar</b> del paso 3.</p>
 
-    <div class="grupo">Sin cuenta, gratis <span>&mdash; la mas comoda</span></div>
+    <div class="grupo">Sin cuenta, gratis <span>&mdash; la mas comoda. Meta AI abre un aviso de iniciar sesion: se cierra y sigue funcionando</span></div>
     <div class="ias" id="iasSin"></div>
 
     <div class="grupo">Con cuenta o plan gratuito <span>&mdash; requieren registrarse una vez</span></div>
@@ -175,6 +175,9 @@ const IAS_SIN_CUENTA = [
     t: "Compara modelos" },
   { n: "DeepSeek", base: "https://chat.deepseek.com/?", p: "q", extra: "",
     t: "Sin registro" },
+  /* Pide iniciar sesion, pero el aviso se cierra y deja usar el chat sin cuenta. */
+  { n: "Meta AI", base: "https://www.meta.ai/?", p: "q", extra: "",
+    t: "Sin registro, cierra el aviso" },
 ];
 
 const IAS_CON_CUENTA = [
