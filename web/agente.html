@@ -130,7 +130,7 @@
 </div>
 
 <script type="module">
-import { CONTEXTO } from "./contexto.js";
+import { CONTEXTO, CONTEXTO_CORTO } from "./contexto.js";
 
 document.getElementById("ctx").textContent = CONTEXTO;
 const pregunta = document.getElementById("pregunta");
@@ -149,7 +149,7 @@ const SEPARADOR = "\n\n---\n\nPREGUNTA DEL USUARIO:\n";
    una peticion hecha desde el servidor: varias de estas webs responden 403 a
    cualquier peticion que no venga de un navegador de verdad. */
 const IAS = [
-  { n: "DuckDuckGo AI", base: "https://duckduckgo.com/", p: "q", extra: "ia=chat&",
+  { n: "DuckDuckGo AI", base: "https://duckduckgo.com/?", p: "q", extra: "ia=chat&",
     nota: "gratis, sin cuenta" },
   { n: "Perplexity", base: "https://www.perplexity.ai/search?", p: "q", extra: "",
     nota: "gratis" },
@@ -160,15 +160,16 @@ const IAS = [
   { n: "Claude", base: "https://claude.ai/new?", p: "q", extra: "", nota: "" },
 ];
 
-/* Por debajo de esto casi todas las webs aceptan la direccion. Por encima,
-   algunas la rebotan. A partir de 1500 caracteres de URL es riesgoso. */
-const LIMITE_URL = 1500;
+/* Por debajo de esto casi todas las webs aceptan la direccion. El contexto
+   completo codificado pasa de 5.000 caracteres, asi que los enlaces llevan la
+   version CORTA; el texto completo va por el boton de copiar. */
+const LIMITE_URL = 1800;
 
 const cajaIas = document.getElementById("ias");
 const avisoLargo = document.getElementById("largo");
 
-function armarIas(texto) {
-  const codificada = encodeURIComponent(texto);
+function armarIas(textoCorto) {
+  const codificada = encodeURIComponent(textoCorto);
   avisoLargo.style.display = codificada.length > LIMITE_URL ? "block" : "none";
   cajaIas.innerHTML = IAS.map((ia) => {
     const url = (ia.base + ia.extra + ia.p + "=" + codificada).replace(/&/g, "&amp;");
@@ -179,9 +180,9 @@ function armarIas(texto) {
 
 function armar() {
   const p = pregunta.value.trim();
-  const texto = CONTEXTO + SEPARADOR + (p || "(escribe aqui tu pregunta)");
-  prompt.value = texto;
-  armarIas(texto);
+  const completa = CONTEXTO + SEPARADOR + (p || "(escribe aqui tu pregunta)");
+  prompt.value = completa;
+  armarIas(CONTEXTO_CORTO + SEPARADOR + (p || "(escribe aqui tu pregunta)"));
   okCopia.style.display = "none";
 }
 pregunta.addEventListener("input", armar);
