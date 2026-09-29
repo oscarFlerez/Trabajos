@@ -7,141 +7,162 @@
 <style>
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   body { margin: 0; font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
-         background: #eef2f4; height: 100vh; display: flex; flex-direction: column; color: #1a1a1a; }
-  .cab { background: #0b3d5c; color: #fff; padding: 12px 15px; }
-  .cab h1 { margin: 0; font-size: 16px; }
-  .cab a { color: #b9d4e4; font-size: 12.5px; }
-  .cab .sub { font-size: 11.5px; opacity: .85; margin-top: 2px; }
-  .ctxwrap { max-width: 860px; margin: 12px auto 0; width: calc(100% - 24px); }
-  details.ctx { background: #fff; border: 1px solid #d5dfe5; border-radius: 7px; }
-  details.ctx summary { padding: 11px 14px; cursor: pointer; color: #0b3d5c; font-size: 13.5px; font-weight: 600; }
-  details.ctx pre { margin: 0; padding: 0 14px 14px; font-size: 11.5px; line-height: 1.55;
-                     white-space: pre-wrap; color: #475569; max-height: 260px; overflow: auto; }
-  .hilo { flex: 1; overflow-y: auto; padding: 16px 14px; max-width: 860px; width: 100%; margin: 0 auto; }
-  .msg { max-width: 88%; padding: 11px 14px; border-radius: 9px; margin-bottom: 12px;
-         line-height: 1.6; white-space: pre-wrap; font-size: 15px; }
-  .msg.yo { background: #0b3d5c; color: #fff; margin-left: auto; }
-  .msg.ia { background: #fff; border: 1px solid #dbe3e8; }
-  .msg.aviso { max-width: 100%; background: #fff8e6; border: 1px solid #e8c877; font-size: 13.5px; }
-  .escribiendo { color: #94a3b8; font-style: italic; }
-  .pie { background: #fff; border-top: 1px solid #d5dfe5; padding: 10px 12px; }
-  .forma { max-width: 860px; margin: 0 auto; display: flex; gap: 8px; }
-  textarea { flex: 1; border: 1px solid #cbd5e1; border-radius: 7px; padding: 10px 12px;
-             font-size: 15px; resize: none; height: 46px; font-family: inherit; }
-  button { background: #0b3d5c; color: #fff; border: none; border-radius: 7px;
-           padding: 0 18px; font-size: 15px; font-weight: 600; }
-  button:disabled { background: #94a3b8; }
-  .opc { max-width: 860px; margin: 0 auto 8px; display: flex; gap: 12px; font-size: 12.5px;
-         color: #64748b; align-items: center; flex-wrap: wrap; }
-  .ejemplos { max-width: 860px; margin: 0 auto; display: flex; flex-wrap: wrap; gap: 7px; padding: 0 12px 8px; }
-  .ej { background: #fff; border: 1px solid #cbd5e1; border-radius: 14px; padding: 6px 12px;
-        font-size: 12.5px; cursor: pointer; }
-  @media (max-width: 600px) { .opc { padding: 0 12px; } }
+         background: #eef2f4; color: #1a1a1a; padding-bottom: 40px; }
+  .cab { background: #0b3d5c; color: #fff; padding: 13px 16px; }
+  .cab h1 { margin: 0; font-size: 17px; }
+  .cab a { color: #b9d4e4; font-size: 13px; }
+
+  .env { max-width: 860px; margin: 14px auto 0; width: calc(100% - 24px); }
+
+  .paso { background: #fff; border: 1px solid #dbe3e8; border-radius: 9px;
+          padding: 15px; margin-bottom: 13px; }
+  .paso h2 { margin: 0 0 4px; font-size: 15px; color: #0b3d5c; }
+  .paso p { margin: 0 0 11px; font-size: 13.5px; color: #64748b; line-height: 1.55; }
+  .num { display: inline-block; width: 22px; height: 22px; border-radius: 50%;
+         background: #0b3d5c; color: #fff; text-align: center; line-height: 22px;
+         font-size: 12.5px; font-weight: 600; margin-right: 7px; }
+
+  textarea { width: 100%; border: 1px solid #cbd5e1; border-radius: 7px; padding: 11px 13px;
+             font-size: 15px; font-family: inherit; resize: vertical; }
+  #prompt { min-height: 150px; font-size: 13.5px; line-height: 1.5; }
+  #pregunta { min-height: 62px; }
+
+  .fila { display: flex; gap: 8px; margin-top: 9px; flex-wrap: wrap; }
+  .btn { border: 1px solid #0b3d5c; background: #0b3d5c; color: #fff; padding: 11px 17px;
+         border-radius: 7px; font-size: 14.5px; font-weight: 600; cursor: pointer; flex: 1;
+         min-width: 130px; }
+  .btn.sec { background: #fff; color: #0b3d5c; }
+  .btn.ok { background: #1a7f37; border-color: #1a7f37; }
+  .aviso-ok { display: none; background: #f2f9f4; border: 1px solid #1a7f37; color: #1a7f37;
+              padding: 9px 13px; border-radius: 7px; font-size: 13.5px; margin-top: 9px; }
+
+  .ias { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+  .ias a { display: inline-block; border: 1px solid #cbd5e1; background: #fff; color: #0b3d5c;
+           padding: 9px 13px; border-radius: 7px; font-size: 13.5px; text-decoration: none; }
+
+  details.ctx { background: #fff; border: 1px solid #dbe3e8; border-radius: 9px; margin-bottom: 13px; }
+  details.ctx summary { padding: 13px 16px; cursor: pointer; color: #0b3d5c; font-weight: 600; font-size: 14.5px; }
+  details.ctx pre { margin: 0; padding: 0 16px 16px; font-size: 12px; line-height: 1.55;
+                    white-space: pre-wrap; color: #475569; max-height: 280px; overflow: auto; }
+
+  .nota { background: #fff8e6; border: 1px solid #e8c877; border-radius: 9px;
+          padding: 13px 16px; font-size: 13.5px; line-height: 1.6; color: #6b5200; }
+  .nota b { color: #4a3a00; }
+
+  .resp { background: #fff; border: 1px solid #dbe3e8; border-radius: 9px; padding: 15px;
+          margin-top: 13px; }
+  .resp h2 { margin: 0 0 9px; font-size: 15px; color: #0b3d5c; }
+  #respuesta { min-height: 150px; }
+
+  .pie { max-width: 860px; margin: 20px auto 0; width: calc(100% - 24px);
+         font-size: 12.5px; color: #8b98a4; line-height: 1.6; }
 </style>
 </head>
 <body>
 
 <div class="cab">
   <h1>Agente</h1>
-  <div class="sub">IA gratuita con cuenta de Puter &middot; <a href="index.html">&larr; Volver</a></div>
-</div>
-
-<details class="ctxwrap ctx">
-  <summary>Que se le dice al agente (contexto completo)</summary>
-  <pre id="ctx"></pre>
-</details>
-
-<div class="opc">
-  <label><input type="checkbox" id="incog" checked> Incognito: no guardar esta conversacion</label>
-  <label style="margin-left:auto">Modelo:
-    <select id="modelo">
-      <option value="gpt-4o-mini">gpt-4o-mini</option>
-      <option value="gpt-4o">gpt-4o</option>
-      <option value="claude-sonnet-4">claude-sonnet-4</option>
-      <option value="deepseek-chat">deepseek-chat</option>
-      <option value="gemini-2.5-flash">gemini-2.5-flash</option>
-    </select>
-  </label>
-</div>
-
-<div class="hilo" id="hilo"></div>
-
-<div class="ejemplos" id="ejemplos">
-  <div class="ej">Cuales son las trampas de estos datos?</div>
-  <div class="ej">Como filtro oportunidades de construccion?</div>
-  <div class="ej">Que campos sirven y cuales no?</div>
-  <div class="ej">Como compenso que no haya fecha de cierre?</div>
-</div>
-
-<div class="pie">
-  <div class="forma">
-    <textarea id="entrada" placeholder="Escribi tu consulta..."></textarea>
-    <button id="enviar">Enviar</button>
+  <div class="sub" style="font-size:12.5px;opacity:.85;margin-top:2px">
+    Usa tu propia IA &middot; gratis &middot; sin cuentas nuevas &middot; <a href="index.html">&larr; Volver</a>
   </div>
+</div>
+
+<div class="env">
+
+  <details class="ctx">
+    <summary>Que se le dice al agente (contexto completo)</summary>
+    <pre id="ctx"></pre>
+  </details>
+
+  <div class="nota">
+    <b>Como funciona, y por que se hace asi.</b><br>
+    Esta pagina no tiene servidor ni claves de API. Para no pedirte que te registres en
+    nada ni pagar por el uso de ninguna IA, arma la consulta y tu la llevas a la IA que
+    ya usas, desde la misma pagina. Son dos copiados y pegar.<br><br>
+    <b>Tus datos no salen de tu equipo</b> salvo lo que tu copies y pegues tu mismo.
+    Nada se guarda en ningun archivo ni se envia a ningun servidor.
+  </div>
+
+  <div class="paso" style="margin-top:13px">
+    <h2><span class="num">1</span>Escribe tu consulta</h2>
+    <p>Contexto y pregunta se Armed juntos en el paso 2. Tu solo escribe la pregunta.</p>
+    <textarea id="pregunta" placeholder="Por ejemplo: cuales son las trampas de estos datos y como se compensa la falta de fecha de cierre?"></textarea>
+  </div>
+
+  <div class="paso">
+    <h2><span class="num">2</span>Copia la consulta completa</h2>
+    <p>Lleva el contexto y tu pregunta juntos. Es lo que hace que la IA sepa de que estamos hablando.</p>
+    <textarea id="prompt" readonly></textarea>
+    <div class="fila">
+      <button class="btn" id="copiar">Copiar la consulta</button>
+    </div>
+    <div class="aviso-ok" id="okCopia">Copiada. Ya puedes pegarla en tu IA.</div>
+  </div>
+
+  <div class="paso">
+    <h2><span class="num">3</span>Pegala en la IA que uses</h2>
+    <p>Abre cualquiera de estas en otra pestana, pega la consulta y responde.</p>
+    <div class="ias">
+      <a href="https://gemini.google.com/app" target="_blank" rel="noopener">Gemini</a>
+      <a href="https://chatgpt.com/" target="_blank" rel="noopener">ChatGPT</a>
+      <a href="https://copilot.microsoft.com/" target="_blank" rel="noopener">Copilot</a>
+      <a href="https://claude.ai/" target="_blank" rel="noopener">Claude</a>
+    </div>
+  </div>
+
+  <div class="paso">
+    <h2><span class="num">4</span>Trae la respuesta aqui</h2>
+    <p>Copia la respuesta de la IA y pegala. Queda en esta pagina para que la leas tranquila.</p>
+    <textarea id="respuesta" placeholder="Pega aqui la respuesta..."></textarea>
+    <div class="fila">
+      <button class="btn sec" id="limpiar">Limpiar</button>
+    </div>
+  </div>
+
+  <p class="pie">
+    Datos: Plataforma Nacional de Contratacion (SECOP II), fuente abierta del Estado.
+    El contexto que se le entrega a la IA esta basado en mediciones reales sobre el
+    portal de datos, no en suposiciones.
+  </p>
 </div>
 
 <script type="module">
 import { CONTEXTO } from "./contexto.js";
+
 document.getElementById("ctx").textContent = CONTEXTO;
+const pregunta = document.getElementById("pregunta");
+const prompt = document.getElementById("prompt");
+const respuesta = document.getElementById("respuesta");
+const okCopia = document.getElementById("okCopia");
 
-const hilo = document.getElementById("hilo");
-const entrada = document.getElementById("entrada");
-const boton = document.getElementById("enviar");
-let historial = [];      // solo en la memoria de esta pestana
-let cargando = false;
+const SEPARADOR = "\n\n---\n\nPREGUNTA DEL USUARIO:\n";
 
-const av = document.createElement("div");
-av.className = "msg aviso";
-av.textContent = "Para responder, Puter pide una cuenta gratuita (una vez, con Google o correo). "
-  + "NO es un servicio anonimo: el incognito de este navegador no lo cambia, porque la "
-  + "peticion sale identificada hacia Puter. Lo que si es cierto: esta conversacion no se "
-  + "guarda en ningun archivo ni en ningun servidor nuestro, y se pierde al cerrar la pestana. "
-  + "Aun asi, la pregunta viaja por internet: no escribas datos que no quieras que salgan del equipo.";
-hilo.appendChild(av);
-
-function burbuja(t, c) { const d = document.createElement("div"); d.className = "msg " + c;
-  d.textContent = t; hilo.appendChild(d); hilo.scrollTop = hilo.scrollHeight; return d; }
-
-document.getElementById("ejemplos").addEventListener("click", e => {
-  if (e.target.classList.contains("ej")) { entrada.value = e.target.textContent; entrada.focus(); }
-});
-entrada.addEventListener("keydown", e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); mandar(); } });
-boton.addEventListener("click", mandar);
-
-async function mandar() {
-  if (cargando) return;
-  const texto = entrada.value.trim();
-  if (!texto) return;
-  entrada.value = "";
-  burbuja(texto, "yo");
-
-  if (typeof puter === "undefined") {
-    burbuja("No se pudo cargar el servicio de IA (Puter.js). Revisa la conexion: el script se baja de un servidor externo.", "aviso");
-    return;
-  }
-  const destino = burbuja("", "ia");
-  destino.innerHTML = '<span class="escribiendo">consultando...</span>';
-  cargando = true; boton.disabled = true;
-
-  const ms = [];
-  if (historial.length === 0) ms.push({ role: "system", content: CONTEXTO });
-  for (const m of historial) ms.push(m);
-  ms.push({ role: "user", content: texto });
-
-  try {
-    const r = await puter.ai.chat(ms, { model: document.getElementById("modelo").value, stream: false });
-    const salida = r.message.content || String(r);
-    destino.textContent = salida;
-    historial.push({ role: "user", content: texto }, { role: "assistant", content: salida });
-  } catch (err) {
-    destino.className = "msg aviso";
-    destino.textContent = "La IA no respondio: " + (err && err.message ? err.message : err)
-      + "\n\nPuede faltar iniciar sesion en Puter, o que el modelo no este disponible. Proba otro.";
-  } finally {
-    cargando = false; boton.disabled = false; entrada.focus();
-  }
+function armar() {
+  const p = pregunta.value.trim();
+  prompt.value = CONTEXTO + SEPARADOR + (p || "(escribe aqui tu pregunta)");
+  okCopia.style.display = "none";
 }
+pregunta.addEventListener("input", armar);
+armar();
+
+document.getElementById("copiar").addEventListener("click", async () => {
+  prompt.focus();
+  prompt.select();
+  try {
+    await navigator.clipboard.writeText(prompt.value);
+    okCopia.textContent = "Copiada. Ya puedes pegarla en tu IA.";
+  } catch (e) {
+    document.execCommand("copy");
+    okCopia.textContent = "Copiada. Si no funciona, selecciona el texto y copia a mano.";
+  }
+  okCopia.style.display = "block";
+});
+
+document.getElementById("limpiar").addEventListener("click", () => {
+  respuesta.value = "";
+  okCopia.style.display = "none";
+  pregunta.focus();
+});
 </script>
-<script src="https://js.puter.com/v2/"></script>
 </body>
 </html>
