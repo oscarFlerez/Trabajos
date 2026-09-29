@@ -31,6 +31,24 @@ sys.path.insert(0, os.path.join(RAIZ, "src"))
 
 import historico  # noqa: E402
 
+# La salida va con caracteres del castellano (acentos, enie, simbolos). Cuando el
+# programa corre SIN consola —por ejemplo desde una tarea programada— Python usa
+# cp1252 y se cae al imprimir: "UnicodeEncodeError: charmap codec can't encode".
+# Se fuerza UTF-8 tolerante para que funcione igual en los dos casos.
+if "sys" not in dir():
+    import sys
+
+if hasattr(sys.stdout, "reconfigure"):
+    try:
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
+if hasattr(sys.stderr, "reconfigure"):
+    try:
+        sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
+
 PUERTO = 8765
 
 
@@ -135,6 +153,13 @@ tr.baja td:first-child { box-shadow: inset 3px 0 0 #94a3b8; }
          text-align: center; color: #64748b; }
 .pie { margin-top: 30px; font-size: 12px; color: #94a3b8; line-height: 1.6; }
 a.enlace { color: #0b3d5c; }
+.descarga { float: right; display: inline-block; background: rgba(255,255,255,.14);
+  color: #fff; border: 1px solid rgba(255,255,255,.4); padding: 6px 13px; border-radius: 5px;
+  font-size: 12.5px; text-decoration: none; }
+.descarga:hover { background: rgba(255,255,255,.26); }
+.contador { float: right; margin-right: 10px; color: rgba(255,255,255,.85); font-size: 12.5px;
+  padding: 7px 0; }
+
 """
 
 
@@ -144,7 +169,14 @@ def pagina(ops, prec, marcados, error):
          '<meta name="viewport" content="width=device-width, initial-scale=1">',
          "<title>Oportunidades de licitacion</title><style>" + CSS + "</style></head><body>"]
 
-    h.append('<div class="barra"><h1>Oportunidades de licitacion publica</h1>'
+    pend = sum(1 for v in marcados.values() if v == "pendiente") if marcados else 0
+    hay_pdf = os.path.exists(os.path.join(RAIZ, "informe-semanal.pdf"))
+    h.append('<div class="barra">')
+    if hay_pdf:
+        h.append('<a class="descarga" href="/informe.pdf">Descargar informe (PDF)</a>')
+    if marcados:
+        h.append('<span class="contador">%d sin revisar</span>' % pend)
+    h.append('<h1>Oportunidades de licitacion publica</h1>'
              "<p>Informacion de la Plataforma Nacional de Contratacion (SECOP II) &middot; "
              "consultada el " + hoy.strftime("%d/%m/%Y") + "</p></div>")
 

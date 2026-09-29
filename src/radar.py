@@ -21,6 +21,26 @@ import urllib.parse
 import urllib.request
 from datetime import datetime
 
+AMARILLO, ROJO, VERDE, FIN = "\033[33m", "\033[31m", "\033[32m", "\033[0m"
+
+# La salida va con caracteres del castellano (acentos, enie, simbolos). Cuando el
+# programa corre SIN consola —por ejemplo desde una tarea programada— Python usa
+# cp1252 y se cae al imprimir: "UnicodeEncodeError: charmap codec can't encode".
+# Se fuerza UTF-8 tolerante para que funcione igual en los dos casos.
+if "sys" not in dir():
+    import sys
+
+if hasattr(sys.stdout, "reconfigure"):
+    try:
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
+if hasattr(sys.stderr, "reconfigure"):
+    try:
+        sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
+
 ENDPOINT = "https://www.datos.gov.co/resource/p6dx-8zbt.json"
 
 # ------------------------------------------------------------------ PERFIL
@@ -186,6 +206,48 @@ def puntuar(f, p):
     return max(0, min(100, int(puntos))), razones
 
 
+# --------------------------------------------------------------------------
+# ESCRITURA SEGURA
+# Guardar el CSV directamente falla si el archivo esta abierto. Pasa de verdad:
+# el cliente abre el CSV en Excel, o la corrida anterior sigue escribiendo.
+# La salida es un archivo temporal y luego se renombra, que en Windows es atomico:
+# o queda el nuevo completo o queda el anterior, nunca uno a medio escribir.
+# --------------------------------------------------------------------------
+def escribir_csv(ruta, cabecera, filas):
+    """Escribe el CSV sin dejar archivos a medias. Devuelve la ruta escrita."""
+    import tempfile
+    import time
+    directorio = os.path.dirname(os.path.abspath(ruta)) or "."
+    ultimo_error = None
+    for intento in range(4):
+        tmp = os.path.join(directorio, ".tmp_" + os.path.basename(ruta))
+        try:
+            with open(tmp, "w", newline="", encoding="utf-8-sig") as fh:
+                w = csv.writer(fh)
+                w.writerow(cabecera)
+                for f in filas:
+                    w.writerow(f)
+            os.replace(tmp, ruta)
+            return ruta
+        except PermissionError as exc:
+            ultimo_error = exc
+            time.sleep(0.6 * (intento + 1))
+        except OSError as exc:
+            ultimo_error = exc
+            break
+        finally:
+            if os.path.exists(tmp):
+                try:
+                    os.remove(tmp)
+                except OSError:
+                    pass
+    # Ultimo recurso: no perder los datos aunque el destino este bloqueado.
+    copia = ruta.replace(".csv", "_%s.csv" % datetime.now().strftime("%Y%m%d_%H%M%S"))
+    import shutil
+    shutil.copyfile(ruta, copia) if os.path.exists(ruta) else None
+    raise PermissionError("No se pudo escribir %s: %s" % (ruta, ultimo_error))
+
+
 def main():
     print("=" * 76)
     print("  RADAR DE LICITACIONES  -  " + PERFIL["empresa"])
@@ -232,17 +294,21 @@ def main():
             print("     Link       : " + lk)
 
     salida = "oportunidades.csv"
-    with open(salida, "w", newline="", encoding="utf-8-sig") as fh:
-        w = csv.writer(fh)
-        w.writerow(["score", "referencia", "entidad", "ciudad", "departamento",
-                    "objeto", "presupuesto", "oferentes", "razones", "link"])
-        for f in res:
-            w.writerow([f["_score"], f.get("referencia_del_proceso"), f.get("entidad"),
-                        f.get("ciudad_entidad"), f.get("departamento_entidad"),
-                        objeto_limpio(f)[0], f.get("precio_base"),
-                        f.get("conteo_de_respuestas_a_ofertas"),
-                        "; ".join(f["_razones"]), link_de(f)])
-    print("\n  Guardado: " + salida)
+    try:
+        escribir_csv(
+            salida,
+            ["score", "referencia", "entidad", "ciudad", "departamento",
+             "objeto", "presupuesto", "oferentes", "razones", "link"],
+            [[f["_score"], f.get("referencia_del_proceso"), f.get("entidad"),
+              f.get("ciudad_entidad"), f.get("departamento_entidad"),
+              objeto_limpio(f)[0], f.get("precio_base"),
+              f.get("conteo_de_respuestas_a_ofertas"),
+              "; ".join(f["_razones"]), link_de(f)] for f in res])
+        print("\n  Guardado: " + salida)
+    except PermissionError as exc:
+        print("\n  " + AMARILLO + "AVISO: no se pudo guardar " + salida + FIN)
+        print("        " + str(exc))
+        print("        Cierre Excel o el explorador que lo tenga abierto y vuelve a correr.")
 
     # --- Registro en el historico -------------------------------------------
     # Sin esto no hay forma de saber si el filtro acierta. El cliente marca

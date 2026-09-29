@@ -28,6 +28,24 @@ import re
 from collections import Counter, defaultdict
 from datetime import datetime, timezone
 
+# La salida va con caracteres del castellano (acentos, enie, simbolos). Cuando el
+# programa corre SIN consola —por ejemplo desde una tarea programada— Python usa
+# cp1252 y se cae al imprimir: "UnicodeEncodeError: charmap codec can't encode".
+# Se fuerza UTF-8 tolerante para que funcione igual en los dos casos.
+if "sys" not in dir():
+    import sys
+
+if hasattr(sys.stdout, "reconfigure"):
+    try:
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
+if hasattr(sys.stderr, "reconfigure"):
+    try:
+        sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
+
 RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ARCHIVO = os.path.join(RAIZ, "historial.jsonl")
 

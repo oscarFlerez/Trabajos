@@ -27,6 +27,24 @@ import threading
 import time
 import webbrowser
 
+# La salida va con caracteres del castellano (acentos, enie, simbolos). Cuando el
+# programa corre SIN consola —por ejemplo desde una tarea programada— Python usa
+# cp1252 y se cae al imprimir: "UnicodeEncodeError: charmap codec can't encode".
+# Se fuerza UTF-8 tolerante para que funcione igual en los dos casos.
+if "sys" not in dir():
+    import sys
+
+if hasattr(sys.stdout, "reconfigure"):
+    try:
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
+if hasattr(sys.stderr, "reconfigure"):
+    try:
+        sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
+
 RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SRC = os.path.join(RAIZ, "src")
 sys.path.insert(0, SRC)
@@ -78,9 +96,19 @@ def correr(modulo, argumentos=()):
     # y los pasos se ven desordenados.
     sys.stdout.flush()
     sys.stderr.flush()
-    codigo = subprocess.call([sys.executable, ruta] + list(argumentos))
+    proc = subprocess.run([sys.executable, ruta] + list(argumentos),
+                         capture_output=True, text=True, encoding="utf-8",
+                         errors="replace")
+    if proc.stdout:
+        print(proc.stdout)
+    if proc.returncode != 0 and proc.stderr:
+        # Sin esto solo se ve "FALLO"; el motivo real se pierde y hay que
+        # adivinar. En una tarea programada es la unica pista que queda.
+        print("      " + ROJO + "detalle del error:" + FIN)
+        for linea in proc.stderr.strip().splitlines()[-6:]:
+            print("        " + linea)
     sys.stdout.flush()
-    return codigo == 0
+    return proc.returncode == 0
 
 
 def resumen():
@@ -109,6 +137,8 @@ def main():
     ap.add_argument("--actualizar", action="store_true", help="Solo actualizar y salir")
     ap.add_argument("--puerto", type=int, default=8765)
     ap.add_argument("--sin-navegador", action="store_true")
+    ap.add_argument("--sin-panel", action="store_true",
+                    help="Actualiza y genera el informe, pero no abre el panel. Es lo que usa la tarea programada.")
     args = ap.parse_args()
 
     print("=" * 66)
@@ -138,7 +168,7 @@ def main():
         else:
             error("La busqueda fallo. Revisa la conexion a internet.")
 
-    if args.actualizar:
+    if args.actualizar and not args.sin_panel:
         print()
         return 0 if exito else 1
 
@@ -152,6 +182,12 @@ def main():
             aviso("No se genero el informe. El panel funciona igual.")
 
     # ---- Panel ----
+    if args.sin_panel:
+        print("\n  " + GRIS + "Panel no abierto (--sin-panel). "
+              "Datos e informe actualizados." + FIN)
+        print("")
+        return 0 if exito else 1
+
     url = "http://127.0.0.1:%d/" % args.puerto
     print("\n" + "=" * 66)
     print("  " + VERDE + "LISTO" + FIN)

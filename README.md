@@ -90,6 +90,48 @@ python src/app.py --sin-navegador
 El paso 1 revisa que el entorno virtual y `pypdf` esten antes de empezar, y
 dice como instalarlos si faltan, en vez de fallar a mitad del trabajo.
 
+## Correr solo, sin recordar
+
+Sin esto el radar sirve unicamente el dia que alguien se acuerde de abrirlo. Y un
+servicio que hay que recordar es un servicio que no se paga.
+
+```bash
+python src/programar.py --instalar                    # lunes a las 07:00
+python src/programar.py --instalar --dia viernes --hora 16:00
+python src/programar.py --estado
+python src/programar.py --desinstalar
+```
+
+Registra una tarea del Programador de tareas de Windows que actualiza los datos
+y genera el informe semanal, **sin abrir el panel** (abrirlo en una tarea
+programada dejaria el proceso colgado). Usa `schtasks`, que viene con Windows: no
+instala nada. Cada corrida deja su log en `programacion.log`.
+
+Para probarla sin esperar al lunes:
+
+```bash
+schtasks /run /tn RadarLicitaciones
+```
+
+#### Tres fallos silenciosos que solo aparecen sin consola
+
+Los tres dan el mismo sintoma: la tarea dice `CORRECTO` y no pasa nada.
+
+1. **`UnicodeEncodeError: 'charmap' codec can't encode`.** Sin consola, Python usa
+   cp1252 y se cae al imprimir un acento o un simbolo. Todos los scripts fuerzan
+   UTF-8 con `sys.stdout.reconfigure(...)` al arrancar.
+2. **El `>>` del log no redirigia nada.** `schtasks` ejecuta el comando
+   directamente, sin shell, asi que `>>` llegaba a Python como argumento literal.
+   El comando va envuelto en `cmd /c "..."`.
+3. **`PermissionError: 'oportunidades.csv'`.** Y la app decia "Revisa la conexion
+   a internet", que era mentira. Lo real: el archivo estaba bloqueado por otra
+   corrida, o por el cliente con el CSV abierto en Excel. La app ahora muestra el
+   error real en vez de un `FALLO` generico, y el CSV se escribe en un temporal y
+   se renombra al final, que en Windows es atomico.
+
+El tercero es el que importa en produccion: **el lunes va a fallar si alguien
+tiene el CSV abierto en Excel.** Con escritura atomica y reintentos, ya no.
+
 ## Estructura
 
 ```
