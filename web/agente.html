@@ -8,124 +8,139 @@
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   body { margin: 0; font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
          background: #eef2f4; color: #1a1a1a; padding-bottom: 40px; }
-  .cab { background: #0b3d5c; color: #fff; padding: 13px 16px; }
-  .cab h1 { margin: 0; font-size: 17px; }
-  .cab a { color: #b9d4e4; font-size: 13px; }
+  .cab { background: #0b3d5c; color: #fff; padding: 14px 16px; }
+  .cab h1 { margin: 0; font-size: 18px; }
+  .cab .sub { font-size: 12.5px; opacity: .88; margin-top: 3px; }
+  .cab a { color: #b9d4e4; }
 
-  .env { max-width: 860px; margin: 14px auto 0; width: calc(100% - 24px); }
+  .env { max-width: 900px; margin: 14px auto 0; width: calc(100% - 24px); }
 
-  .paso { background: #fff; border: 1px solid #dbe3e8; border-radius: 9px;
-          padding: 15px; margin-bottom: 13px; }
-  .paso h2 { margin: 0 0 4px; font-size: 15px; color: #0b3d5c; }
-  .paso p { margin: 0 0 11px; font-size: 13.5px; color: #64748b; line-height: 1.55; }
-  .num { display: inline-block; width: 22px; height: 22px; border-radius: 50%;
-         background: #0b3d5c; color: #fff; text-align: center; line-height: 22px;
-         font-size: 12.5px; font-weight: 600; margin-right: 7px; }
+  .caja { background: #fff; border: 1px solid #dbe3e8; border-radius: 10px;
+          padding: 16px; margin-bottom: 14px; }
+  .caja h2 { margin: 0 0 5px; font-size: 16px; color: #0b3d5c;
+             display: flex; align-items: center; gap: 9px; }
+  .caja p.sub { margin: 0 0 12px; font-size: 13.5px; color: #64748b; line-height: 1.55; }
+  .num { display: inline-flex; align-items: center; justify-content: center;
+         width: 25px; height: 25px; border-radius: 50%; background: #0b3d5c; color: #fff;
+         font-size: 13px; font-weight: 700; flex: 0 0 auto; }
 
-  textarea { width: 100%; border: 1px solid #cbd5e1; border-radius: 7px; padding: 11px 13px;
-             font-size: 15px; font-family: inherit; resize: vertical; }
-  #prompt { min-height: 150px; font-size: 13.5px; line-height: 1.5; }
-  #pregunta { min-height: 62px; }
+  textarea { width: 100%; border: 1px solid #cbd5e1; border-radius: 8px; padding: 12px 14px;
+             font-size: 15.5px; font-family: inherit; resize: vertical; }
+  #pregunta { min-height: 68px; }
+  #prompt { min-height: 130px; font-size: 13px; line-height: 1.5; background: #f8fafb; }
+  #respuesta { min-height: 140px; }
 
-  .fila { display: flex; gap: 8px; margin-top: 9px; flex-wrap: wrap; }
-  .btn { border: 1px solid #0b3d5c; background: #0b3d5c; color: #fff; padding: 11px 17px;
-         border-radius: 7px; font-size: 14.5px; font-weight: 600; cursor: pointer; flex: 1;
-         min-width: 130px; }
-  .btn.sec { background: #fff; color: #0b3d5c; }
-  .btn.ok { background: #1a7f37; border-color: #1a7f37; }
-  .aviso-ok { display: none; background: #f2f9f4; border: 1px solid #1a7f37; color: #1a7f37;
-              padding: 9px 13px; border-radius: 7px; font-size: 13.5px; margin-top: 9px; }
+  /* ---- Los botones de las IAs: lo principal de la pagina ---- */
+  .ias { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 10px; }
+  .ia { display: flex; flex-direction: column; gap: 3px; text-decoration: none;
+        background: #fff; border: 2px solid #0b3d5c; border-radius: 10px;
+        padding: 13px 15px; transition: transform .06s, box-shadow .12s; }
+  .ia:hover { background: #0b3d5c; }
+  .ia:hover .ia-n, .ia:hover .ia-t, .ia:hover .ia-b { color: #fff; }
+  .ia:hover .ia-b { background: rgba(255,255,255,.25); border-color: rgba(255,255,255,.5); }
+  .ia:active { transform: scale(.975); }
+  .ia-n { font-size: 16px; font-weight: 700; color: #0b3d5c; }
+  .ia-t { font-size: 12px; color: #64748b; }
+  .ia-b { align-self: flex-start; margin-top: 4px; font-size: 10.5px; font-weight: 600;
+          border: 1px solid #cbd5e1; color: #64748b; padding: 2px 7px; border-radius: 10px; }
+  .ia-b.verde { background: #f2f9f4; border-color: #1a7f37; color: #1a7f37; }
+  .ia-b.libre { background: #eef5fb; border-color: #0b3d5c; color: #0b3d5c; }
 
-  .ias { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
-  .ias a { display: inline-block; border: 1px solid #cbd5e1; background: #fff; color: #0b3d5c;
-           padding: 9px 13px; border-radius: 7px; font-size: 13.5px; text-decoration: none; }
+  .grupo { font-size: 12px; font-weight: 700; color: #0b3d5c; text-transform: uppercase;
+           letter-spacing: .5px; margin: 18px 0 9px; }
+  .grupo:first-child { margin-top: 0; }
+  .grupo span { color: #8b98a4; font-weight: 500; text-transform: none; letter-spacing: 0; }
 
-  details.ctx { background: #fff; border: 1px solid #dbe3e8; border-radius: 9px; margin-bottom: 13px; }
-  details.ctx summary { padding: 13px 16px; cursor: pointer; color: #0b3d5c; font-weight: 600; font-size: 14.5px; }
+  /* ---- Copiar: pequeno y secundario ---- */
+  .secundario { display: flex; align-items: center; gap: 9px; flex-wrap: wrap;
+                margin-top: 10px; }
+  .btn-chico { display: inline-block; border: 1px solid #cbd5e1; background: #f8fafb;
+               color: #475569; padding: 7px 13px; border-radius: 6px; font-size: 12.5px;
+               cursor: pointer; }
+  .btn-chico:hover { border-color: #0b3d5c; color: #0b3d5c; }
+  .ok { display: none; background: #f2f9f4; border: 1px solid #1a7f37; color: #1a7f37;
+        padding: 7px 12px; border-radius: 6px; font-size: 12.5px; }
+
+  details.ctx { background: #fff; border: 1px solid #dbe3e8; border-radius: 10px; margin-bottom: 14px; }
+  details.ctx summary { padding: 14px 16px; cursor: pointer; color: #0b3d5c;
+                        font-weight: 600; font-size: 14.5px; }
   details.ctx pre { margin: 0; padding: 0 16px 16px; font-size: 12px; line-height: 1.55;
-                    white-space: pre-wrap; color: #475569; max-height: 280px; overflow: auto; }
+                    white-space: pre-wrap; color: #475569; max-height: 260px; overflow: auto; }
 
-  .nota { background: #fff8e6; border: 1px solid #e8c877; border-radius: 9px;
-          padding: 13px 16px; font-size: 13.5px; line-height: 1.6; color: #6b5200; }
+  .nota { background: #fff8e6; border: 1px solid #e8c877; border-radius: 10px;
+          padding: 14px 16px; font-size: 13.5px; line-height: 1.6; color: #6b5200; }
   .nota b { color: #4a3a00; }
-
-  .resp { background: #fff; border: 1px solid #dbe3e8; border-radius: 9px; padding: 15px;
-          margin-top: 13px; }
-  .resp h2 { margin: 0 0 9px; font-size: 15px; color: #0b3d5c; }
-  #respuesta { min-height: 150px; }
-
-  .pie { max-width: 860px; margin: 20px auto 0; width: calc(100% - 24px);
+  .pie { max-width: 900px; margin: 18px auto 0; width: calc(100% - 24px);
          font-size: 12.5px; color: #8b98a4; line-height: 1.6; }
+  @media (max-width: 520px) { .ias { grid-template-columns: 1fr 1fr; } .ia { padding: 11px 12px; } }
 </style>
 </head>
 <body>
 
 <div class="cab">
   <h1>Agente</h1>
-  <div class="sub" style="font-size:12.5px;opacity:.85;margin-top:2px">
-    Usa tu propia IA &middot; gratis &middot; sin cuentas nuevas &middot; <a href="index.html">&larr; Volver</a>
-  </div>
+  <div class="sub">Preguntale a la IA que uses. Esta pagina no tiene servidor ni claves.</div>
+  <div style="margin-top:8px"><a href="index.html">&larr; Volver a las oportunidades</a></div>
 </div>
 
 <div class="env">
 
   <details class="ctx">
-    <summary>Que se le dice al agente (contexto completo)</summary>
+    <summary>Que se le dice a la IA (contexto completo)</summary>
     <pre id="ctx"></pre>
   </details>
 
-  <div class="nota">
-    <b>Como funciona, y por que se hace asi.</b><br>
-    Esta pagina no tiene servidor ni claves de API. Para no pedirte que te registres en
-    nada ni pagar por el uso de ninguna IA, arma la consulta y tu la llevas a la IA que
-    ya usas, desde la misma pagina. Son dos copiados y pegar.<br><br>
-    <b>Tus datos no salen de tu equipo</b> salvo lo que tu copies y pegues tu mismo.
-    Nada se guarda en ningun archivo ni se envia a ningun servidor.
-  </div>
-
-  <div class="paso" style="margin-top:13px">
+  <div class="caja">
     <h2><span class="num">1</span>Escribe tu consulta</h2>
-    <p>Contexto y pregunta se Armed juntos en el paso 2. Tu solo escribe la pregunta.</p>
+    <p class="sub">Contexto y pregunta van juntos a la IA. Tu solo escribes la pregunta.</p>
     <textarea id="pregunta" placeholder="Por ejemplo: cuales son las trampas de estos datos y como se compensa la falta de fecha de cierre?"></textarea>
   </div>
 
-  <div class="paso">
-    <h2><span class="num">2</span>Copia la consulta completa</h2>
-    <p>Lleva el contexto y tu pregunta juntos. Es lo que hace que la IA sepa de que estamos hablando.</p>
+  <div class="caja">
+    <h2><span class="num">2</span>Abre tu IA con la consulta ya escrita</h2>
+    <p class="sub">Toca el boton de la IA que uses: se abre en otra pestana con tu pregunta
+       y el contexto ya en el cuadro. Si a alguna se le abre vacio, es que no acepta el
+       parametro de la direccion; para esa usa <b>Copiar</b> del paso 3.</p>
+
+    <div class="grupo">Sin cuenta, gratis <span>&mdash; la mas comoda</span></div>
+    <div class="ias" id="iasSin"></div>
+
+    <div class="grupo">Con cuenta o plan gratuito <span>&mdash; requieren registrarse una vez</span></div>
+    <div class="ias" id="iasCon"></div>
+  </div>
+
+  <div class="caja">
+    <h2><span class="num">3</span>Si no funciono el boton</h2>
+    <p class="sub">Aqui esta la consulta completa, con el contexto entero. Copiala y pegala
+       a mano en cualquier IA. Es mas larga que la que va por el enlace, asi que esta llega
+       completa incluso en las IAs que rebotan direcciones largas.</p>
     <textarea id="prompt" readonly></textarea>
-    <div class="fila">
-      <button class="btn" id="copiar">Copiar la consulta</button>
+    <div class="secundario">
+      <button class="btn-chico" id="copiar">Copiar la consulta completa</button>
+      <span class="ok" id="okCopia">Copiada</span>
     </div>
-    <div class="aviso-ok" id="okCopia">Copiada. Ya puedes pegarla en tu IA.</div>
   </div>
 
-  <div class="paso">
-    <h2><span class="num">3</span>Abre tu IA con la consulta ya escrita</h2>
-    <p>Haz clic en la que uses. Cada enlace lleva tu pregunta y el contexto en la direccion,
-       asi que la pagina se abre con el texto ya puesto si esa IA lo admite.
-       <b>Si al abrir el cuadro aparece vacio</b>, no pasa nada: el boton de copiar del paso 2
-       siempre funciona, y ahi el texto llega mas largo y completo.</p>
-    <div class="ias" id="ias"></div>
-    <p id="largo" style="display:none;color:#8a6d1a;background:#fff8e6;border:1px solid #e8c877;
-       padding:9px 12px;border-radius:7px;font-size:13px;margin-top:10px">
-      Tu consulta completa es larga y hay IAs que rebotan direcciones demasiado largas.
-      Si al abrir la pagina el cuadro esta vacio, usa el boton <b>Copiar</b> del paso 2.</p>
-  </div>
-
-
-  <div class="paso">
+  <div class="caja">
     <h2><span class="num">4</span>Trae la respuesta aqui</h2>
-    <p>Copia la respuesta de la IA y pegala. Queda en esta pagina para que la leas tranquila.</p>
+    <p class="sub">Copia la respuesta de la IA y pegala. Queda en esta pagina para leerla tranquilo.</p>
     <textarea id="respuesta" placeholder="Pega aqui la respuesta..."></textarea>
-    <div class="fila">
-      <button class="btn sec" id="limpiar">Limpiar</button>
+    <div class="secundario">
+      <button class="btn-chico" id="limpiar">Limpiar</button>
     </div>
+  </div>
+
+  <div class="nota">
+    <b>Por que funciona asi.</b> Esta pagina no tiene servidor, ni claves de API, ni base de
+    datos. Para no pedirte que te registres en nada ni que pagues el uso de ninguna IA,
+    arma la consulta y tu la llevas a la que ya usas.<br><br>
+    <b>Tus datos.</b> Lo unico que sale de tu equipo es lo que tu copias y pegas. Nada se
+    guarda en ningun archivo de esta pagina ni en ningun servidor nuestro.
   </div>
 
   <p class="pie">
-    Datos: Plataforma Nacional de Contratacion (SECOP II), fuente abierta del Estado.
-    El contexto que se le entrega a la IA esta basado en mediciones reales sobre el
-    portal de datos, no en suposiciones.
+    Datos: Plataforma Nacional de Contratacion (SECOP II), fuente abierta del Estado. El
+    contexto que recibe la IA esta basado en mediciones reales sobre el portal de datos.
   </p>
 </div>
 
@@ -135,54 +150,61 @@ import { CONTEXTO, CONTEXTO_CORTO } from "./contexto.js";
 document.getElementById("ctx").textContent = CONTEXTO;
 const pregunta = document.getElementById("pregunta");
 const prompt = document.getElementById("prompt");
-const respuesta = document.getElementById("respuesta");
 const okCopia = document.getElementById("okCopia");
 
+/* El contexto completo son 3.477 caracteres: codificado en una URL pasa de 5.000 y
+   ninguna web lo acepta. Los enlaces llevan la version corta; el texto entero va
+   por el boton Copiar del paso 3. */
 const SEPARADOR = "\n\n---\n\nPREGUNTA DEL USUARIO:\n";
 
-/* Cada IA acepta el texto inicial de forma distinta. Algunas lo leen de la
-   direccion y abren el cuadro ya escrito; otras no lo soportan. Poner el
-   parametro no cuesta nada: si la IA lo lee, ahorra el pegado; si no, el
-   boton de copiar del paso 2 cubre el caso.
-
-   La diferencia se nota de verdad en un navegador, no se puede comprobar con
-   una peticion hecha desde el servidor: varias de estas webs responden 403 a
-   cualquier peticion que no venga de un navegador de verdad. */
-const IAS = [
+const IAS_SIN_CUENTA = [
   { n: "DuckDuckGo AI", base: "https://duckduckgo.com/?", p: "q", extra: "ia=chat&",
-    nota: "gratis, sin cuenta" },
+    t: "Sin registro" },
   { n: "Perplexity", base: "https://www.perplexity.ai/search?", p: "q", extra: "",
-    nota: "gratis" },
-  { n: "You.com", base: "https://you.com/search?", p: "q", extra: "", nota: "gratis" },
-  { n: "Gemini", base: "https://gemini.google.com/app?", p: "q", extra: "", nota: "" },
-  { n: "ChatGPT", base: "https://chatgpt.com/?", p: "q", extra: "", nota: "" },
-  { n: "Copilot", base: "https://copilot.microsoft.com/?", p: "q", extra: "", nota: "" },
-  { n: "Claude", base: "https://claude.ai/new?", p: "q", extra: "", nota: "" },
+    t: "Sin registro" },
+  { n: "You.com", base: "https://you.com/search?", p: "q", extra: "", t: "Sin registro" },
+  { n: "Mistral Le Chat", base: "https://chat.mistral.ai/chat?", p: "q", extra: "",
+    t: "Sin registro" },
+  { n: "HuggingChat", base: "https://huggingface.co/chat/?", p: "q", extra: "",
+    t: "Modelos abiertos" },
+  { n: "Abacus ChatLLM", base: "https://chatllm.abacus.ai/?", p: "q", extra: "",
+    t: "Sin registro" },
+  { n: "Qwen", base: "https://chat.qwen.ai/?", p: "q", extra: "", t: "Sin registro" },
+  { n: "Kimi", base: "https://www.kimi.com/?", p: "q", extra: "", t: "Sin registro" },
+  { n: "LMArena", base: "https://lmarena.ai/?", p: "q", extra: "",
+    t: "Compara modelos" },
+  { n: "DeepSeek", base: "https://chat.deepseek.com/?", p: "q", extra: "",
+    t: "Sin registro" },
 ];
 
-/* Por debajo de esto casi todas las webs aceptan la direccion. El contexto
-   completo codificado pasa de 5.000 caracteres, asi que los enlaces llevan la
-   version CORTA; el texto completo va por el boton de copiar. */
-const LIMITE_URL = 1800;
+const IAS_CON_CUENTA = [
+  { n: "Gemini", base: "https://gemini.google.com/app?", p: "q", extra: "",
+    t: "Google" },
+  { n: "ChatGPT", base: "https://chatgpt.com/?", p: "q", extra: "", t: "OpenAI" },
+  { n: "Copilot", base: "https://copilot.microsoft.com/?", p: "q", extra: "",
+    t: "Microsoft" },
+  { n: "Claude", base: "https://claude.ai/new?", p: "q", extra: "", t: "Anthropic" },
+];
 
-const cajaIas = document.getElementById("ias");
-const avisoLargo = document.getElementById("largo");
+function htmlDe(ia, codificada) {
+  const url = (ia.base + ia.extra + ia.p + "=" + codificada).replace(/&/g, "&amp;");
+  return '<a class="ia" href="' + url + '" target="_blank" rel="noopener">' +
+    '<span class="ia-n">' + ia.n + "</span>" +
+    '<span class="ia-t">' + ia.t + "</span>" +
+    '<span class="ia-b verde">abre con el texto</span></a>';
+}
 
-function armarIas(textoCorto) {
-  const codificada = encodeURIComponent(textoCorto);
-  avisoLargo.style.display = codificada.length > LIMITE_URL ? "block" : "none";
-  cajaIas.innerHTML = IAS.map((ia) => {
-    const url = (ia.base + ia.extra + ia.p + "=" + codificada).replace(/&/g, "&amp;");
-    const marca = ia.nota ? ' <span style="color:#8b98a4;font-size:12px">(' + ia.nota + ")</span>" : "";
-    return '<a href="' + url + '" target="_blank" rel="noopener">' + ia.n + marca + "</a>";
-  }).join("");
+function armarIas(texto) {
+  const c = encodeURIComponent(texto);
+  document.getElementById("iasSin").innerHTML = IAS_SIN_CUENTA.map((i) => htmlDe(i, c)).join("");
+  document.getElementById("iasCon").innerHTML = IAS_CON_CUENTA.map((i) => htmlDe(i, c)).join("");
 }
 
 function armar() {
   const p = pregunta.value.trim();
-  const completa = CONTEXTO + SEPARADOR + (p || "(escribe aqui tu pregunta)");
-  prompt.value = completa;
-  armarIas(CONTEXTO_CORTO + SEPARADOR + (p || "(escribe aqui tu pregunta)"));
+  const sufijo = p || "(escribe aqui tu pregunta)";
+  prompt.value = CONTEXTO + SEPARADOR + sufijo;
+  armarIas(CONTEXTO_CORTO + SEPARADOR + sufijo);
   okCopia.style.display = "none";
 }
 pregunta.addEventListener("input", armar);
@@ -193,16 +215,16 @@ document.getElementById("copiar").addEventListener("click", async () => {
   prompt.select();
   try {
     await navigator.clipboard.writeText(prompt.value);
-    okCopia.textContent = "Copiada. Ya puedes pegarla en tu IA.";
+    okCopia.textContent = "Copiada. Pegala en tu IA.";
   } catch (e) {
     document.execCommand("copy");
-    okCopia.textContent = "Copiada. Si no funciona, selecciona el texto y copia a mano.";
+    okCopia.textContent = "Selecciona el texto y copia a mano.";
   }
-  okCopia.style.display = "block";
+  okCopia.style.display = "inline-block";
 });
 
 document.getElementById("limpiar").addEventListener("click", () => {
-  respuesta.value = "";
+  document.getElementById("respuesta").value = "";
   okCopia.style.display = "none";
   pregunta.focus();
 });
