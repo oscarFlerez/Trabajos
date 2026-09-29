@@ -43,7 +43,7 @@
 
 <div class="cab">
   <h1>Agente</h1>
-  <div class="sub">IA gratuita &middot; sin clave de API &middot; <a href="index.html">&larr; Volver</a></div>
+  <div class="sub">IA gratuita con cuenta de Puter &middot; <a href="index.html">&larr; Volver</a></div>
 </div>
 
 <details class="ctxwrap ctx">
@@ -92,9 +92,11 @@ let cargando = false;
 
 const av = document.createElement("div");
 av.className = "msg aviso";
-av.textContent = "Modo incognito: la conversacion NO se guarda en ningun archivo y se pierde "
-  + "al cerrar la pestana. Aun asi la pregunta viaja por internet al servicio de Puter: "
-  + "si escribes el nombre de tu empresa, ese dato sale de tu dispositivo.";
+av.textContent = "Para responder, Puter pide una cuenta gratuita (una vez, con Google o correo). "
+  + "NO es un servicio anonimo: el incognito de este navegador no lo cambia, porque la "
+  + "peticion sale identificada hacia Puter. Lo que si es cierto: esta conversacion no se "
+  + "guarda en ningun archivo ni en ningun servidor nuestro, y se pierde al cerrar la pestana. "
+  + "Aun asi, la pregunta viaja por internet: no escribas datos que no quieras que salgan del equipo.";
 hilo.appendChild(av);
 
 function burbuja(t, c) { const d = document.createElement("div"); d.className = "msg " + c;

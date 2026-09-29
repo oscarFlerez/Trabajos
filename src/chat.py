@@ -8,7 +8,10 @@ con el contexto de esta aplicacion ya inyectado. Todos los datos con los que
 trabajamos son publicos, asi que no hay nada secreto que compartir.
 
 Que se verifico el 29/09/2026 antes de elegir proveedor:
-  - Puter.js        -> HTTP 200, 491 KB, trae chat. VIABLE, sin clave de API.
+  - Puter.js        -> HTTP 200, 491 KB, trae chat. VIABLE sin clave de API,
+                       PERO al usarlo abre un popup de registro: exige una cuenta
+                       gratuita de Puter. No es anonimo. Verificado en pantalla
+                       el 29/09/2026: aparece "Use your Puter account to continue".
   - DuckDuckGo AI   -> la pagina carga pero NO entrega el token vqd a una
                        peticion que no sea de navegador. NO VIABLE.
   - api.puter.com   -> 404. No hay REST, solo SDK de navegador.
@@ -179,7 +182,7 @@ def pagina_chat():
   <h1>Agente</h1>
   <a href="/">&larr; Volver a las oportunidades</a>
   <div class="der">
-    <span class="pill">IA gratuita &middot; sin clave de API</span>
+    <span class="pill">IA gratuita con cuenta de Puter</span>
     <span class="pill" id="estadoIncog">Incongnito: activo</span>
   </div>
 </div>
@@ -297,10 +300,11 @@ const av = document.createElement("div");
 av.className = "msg aviso";
 av.style.maxWidth = "940px";
 av.style.margin = "0 auto 14px";
-av.textContent = "Modo incognito: la conversacion NO se guarda en esta aplicacion ni en "
-  + "ningun archivo, y se pierde al cerrar la pestana. Aun asi, la pregunta viaja por "
-  + "internet al servicio de Puter: si le escribes el nombre de su empresa, ese dato "
-  + "sale de su equipo.";
+av.textContent = "Para responder, Puter pide una cuenta gratuita (una vez). NO es anonimo: "
+  + "el incognito no lo cambia porque la peticion sale identificada. Lo que si es "
+  + "cierto: no se guarda en ningun archivo ni servidor nuestro, y se pierde al cerrar "
+  + "la pestana. Aun asi la pregunta viaja por internet: no escribas datos que no "
+  + "quieras que salgan del equipo.";
 hilo.appendChild(av);
 </script>
 </body></html>"""
@@ -344,7 +348,7 @@ def main():
     print("  VENTANA DE AGENTE")
     print("  " + url)
     print("  " + "-" * 62)
-    print("  IA gratuita via Puter, sin clave de API.")
+    print("  IA gratuita via Puter. Requiere cuenta gratuita de Puter (una vez).")
     print("  Modo incognito por defecto: nada se guarda en disco.")
     print("=" * 62)
     import threading

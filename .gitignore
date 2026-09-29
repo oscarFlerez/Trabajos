@@ -26,3 +26,6 @@ programacion.log
 
 # Cache de geografia (se regenera sola)
 geo_cache.json
+
+# Capturas de pantalla
+docs/capturas/
