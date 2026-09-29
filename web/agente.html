@@ -100,15 +100,18 @@
   </div>
 
   <div class="paso">
-    <h2><span class="num">3</span>Pegala en la IA que uses</h2>
-    <p>Abre cualquiera de estas en otra pestana, pega la consulta y responde.</p>
-    <div class="ias">
-      <a href="https://gemini.google.com/app" target="_blank" rel="noopener">Gemini</a>
-      <a href="https://chatgpt.com/" target="_blank" rel="noopener">ChatGPT</a>
-      <a href="https://copilot.microsoft.com/" target="_blank" rel="noopener">Copilot</a>
-      <a href="https://claude.ai/" target="_blank" rel="noopener">Claude</a>
-    </div>
+    <h2><span class="num">3</span>Abre tu IA con la consulta ya escrita</h2>
+    <p>Haz clic en la que uses. Cada enlace lleva tu pregunta y el contexto en la direccion,
+       asi que la pagina se abre con el texto ya puesto si esa IA lo admite.
+       <b>Si al abrir el cuadro aparece vacio</b>, no pasa nada: el boton de copiar del paso 2
+       siempre funciona, y ahi el texto llega mas largo y completo.</p>
+    <div class="ias" id="ias"></div>
+    <p id="largo" style="display:none;color:#8a6d1a;background:#fff8e6;border:1px solid #e8c877;
+       padding:9px 12px;border-radius:7px;font-size:13px;margin-top:10px">
+      Tu consulta completa es larga y hay IAs que rebotan direcciones demasiado largas.
+      Si al abrir la pagina el cuadro esta vacio, usa el boton <b>Copiar</b> del paso 2.</p>
   </div>
+
 
   <div class="paso">
     <h2><span class="num">4</span>Trae la respuesta aqui</h2>
@@ -137,9 +140,48 @@ const okCopia = document.getElementById("okCopia");
 
 const SEPARADOR = "\n\n---\n\nPREGUNTA DEL USUARIO:\n";
 
+/* Cada IA acepta el texto inicial de forma distinta. Algunas lo leen de la
+   direccion y abren el cuadro ya escrito; otras no lo soportan. Poner el
+   parametro no cuesta nada: si la IA lo lee, ahorra el pegado; si no, el
+   boton de copiar del paso 2 cubre el caso.
+
+   La diferencia se nota de verdad en un navegador, no se puede comprobar con
+   una peticion hecha desde el servidor: varias de estas webs responden 403 a
+   cualquier peticion que no venga de un navegador de verdad. */
+const IAS = [
+  { n: "DuckDuckGo AI", base: "https://duckduckgo.com/", p: "q", extra: "ia=chat&",
+    nota: "gratis, sin cuenta" },
+  { n: "Perplexity", base: "https://www.perplexity.ai/search?", p: "q", extra: "",
+    nota: "gratis" },
+  { n: "You.com", base: "https://you.com/search?", p: "q", extra: "", nota: "gratis" },
+  { n: "Gemini", base: "https://gemini.google.com/app?", p: "q", extra: "", nota: "" },
+  { n: "ChatGPT", base: "https://chatgpt.com/?", p: "q", extra: "", nota: "" },
+  { n: "Copilot", base: "https://copilot.microsoft.com/?", p: "q", extra: "", nota: "" },
+  { n: "Claude", base: "https://claude.ai/new?", p: "q", extra: "", nota: "" },
+];
+
+/* Por debajo de esto casi todas las webs aceptan la direccion. Por encima,
+   algunas la rebotan. A partir de 1500 caracteres de URL es riesgoso. */
+const LIMITE_URL = 1500;
+
+const cajaIas = document.getElementById("ias");
+const avisoLargo = document.getElementById("largo");
+
+function armarIas(texto) {
+  const codificada = encodeURIComponent(texto);
+  avisoLargo.style.display = codificada.length > LIMITE_URL ? "block" : "none";
+  cajaIas.innerHTML = IAS.map((ia) => {
+    const url = (ia.base + ia.extra + ia.p + "=" + codificada).replace(/&/g, "&amp;");
+    const marca = ia.nota ? ' <span style="color:#8b98a4;font-size:12px">(' + ia.nota + ")</span>" : "";
+    return '<a href="' + url + '" target="_blank" rel="noopener">' + ia.n + marca + "</a>";
+  }).join("");
+}
+
 function armar() {
   const p = pregunta.value.trim();
-  prompt.value = CONTEXTO + SEPARADOR + (p || "(escribe aqui tu pregunta)");
+  const texto = CONTEXTO + SEPARADOR + (p || "(escribe aqui tu pregunta)");
+  prompt.value = texto;
+  armarIas(texto);
   okCopia.style.display = "none";
 }
 pregunta.addEventListener("input", armar);
