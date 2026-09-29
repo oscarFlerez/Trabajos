@@ -153,6 +153,11 @@ tr.baja td:first-child { box-shadow: inset 3px 0 0 #94a3b8; }
          text-align: center; color: #64748b; }
 .pie { margin-top: 30px; font-size: 12px; color: #94a3b8; line-height: 1.6; }
 a.enlace { color: #0b3d5c; }
+.agente { float: right; display: inline-block; background: rgba(255,255,255,.14);
+  color: #fff; border: 1px solid rgba(255,255,255,.4); padding: 6px 13px; border-radius: 5px;
+  font-size: 12.5px; text-decoration: none; margin-right: 8px; }
+.agente:hover { background: rgba(255,255,255,.26); }
+
 .descarga { float: right; display: inline-block; background: rgba(255,255,255,.14);
   color: #fff; border: 1px solid rgba(255,255,255,.4); padding: 6px 13px; border-radius: 5px;
   font-size: 12.5px; text-decoration: none; }
@@ -172,6 +177,7 @@ def pagina(ops, prec, marcados, error):
     pend = sum(1 for v in marcados.values() if v == "pendiente") if marcados else 0
     hay_pdf = os.path.exists(os.path.join(RAIZ, "informe-semanal.pdf"))
     h.append('<div class="barra">')
+    h.append('<a class="agente" href="/chat">Agente (IA gratis)</a>')
     if hay_pdf:
         h.append('<a class="descarga" href="/informe.pdf">Descargar informe (PDF)</a>')
     if marcados:
@@ -309,6 +315,15 @@ class Manejador(BaseHTTPRequestHandler):
             self.send_response(303)
             self.send_header("Location", "/")
             self.end_headers()
+            return
+        if u.path == "/chat":
+            import chat
+            datos = chat.html_chat().encode("utf-8")
+            self.send_response(200)
+            self.send_header("Content-Type", "text/html; charset=utf-8")
+            self.send_header("Content-Length", str(len(datos)))
+            self.end_headers()
+            self.wfile.write(datos)
             return
         if u.path == "/informe.pdf":
             ruta = os.path.join(RAIZ, "informe-semanal.pdf")
