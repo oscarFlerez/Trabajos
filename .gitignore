@@ -23,3 +23,6 @@ desktop.ini
 
 # Log de la tarea programada
 programacion.log
+
+# Cache de geografia (se regenera sola)
+geo_cache.json

@@ -162,6 +162,37 @@ def objeto_limpio(f):
 
     return nom, ""
 
+# --------------------------------------------------------------------------
+# ANTIGUEDAD DEL PROCESO
+# Este es el dato mas importante, y el que FALTA en la fuente.
+#
+# `estado_de_apertura_del_proceso = 'Abierto'` NO significa "se puede licitar".
+# Es el estado interno del proceso en SECOP. Medido el 29/09/2026:
+#   - 8.086.821 procesos marcados "Abierto"
+#   - 4.907.994 (60,7%) publicados antes de 2025
+#   - el mas antiguo sigue "Abierto" desde 2015
+#
+# El dataset NO tiene fecha de cierre. Sin ella, mostrar estos procesos como
+# oportunidad es danino: el cliente hace clic, lo encuentra cerrado y pierde la
+# confianza en la herramienta a la primera.
+#
+# Mitigacion: mostrar siempre la antiguedad, castigar lo viejo, y decirle al
+# usuario que verifique el plazo en SECOP.
+# --------------------------------------------------------------------------
+DIAS_MAXIMOS = 90   # por encima de esto, casi seguro el plazo ya vencio
+
+
+def dias_desde(fecha_texto):
+    """Dias desde la publicacion. None si no se puede leer la fecha."""
+    if not fecha_texto:
+        return None
+    try:
+        solo_fecha = str(fecha_texto).split("T")[0]
+        return (datetime.now().date() - datetime.strptime(solo_fecha, "%Y-%m-%d").date()).days
+    except (ValueError, TypeError):
+        return None
+
+
 def puntuar(f, p):
     """(score 0-100, razones). 0 = descartado."""
     texto = ((f.get("nombre_del_procedimiento") or "") + " " +
@@ -202,6 +233,17 @@ def puntuar(f, p):
     elif oferentes == 0:
         puntos += 10
         razones.append("sin oferentes aun: poca competencia")
+
+    # Antiguedad. Ver la nota de DIAS_MAXIMOS: "Abierto" no significa que se
+    # pueda licitar, y el dataset no trae fecha de cierre.
+    dias = dias_desde(f.get("fecha_de_publicacion_del"))
+    if dias is not None and dias > DIAS_MAXIMOS:
+        if dias > 365:
+            return 0, ["descartado: publicado hace %d dias, el plazo ya vencio" % dias]
+        puntos -= 30
+        razones.append("ATENCION: publicado hace %d dias" % dias)
+    elif dias is not None and dias > 0:
+        razones.append("publicado hace %d dias" % dias)
 
     return max(0, min(100, int(puntos))), razones
 
@@ -287,6 +329,9 @@ def main():
         print("     Presupuesto: " + ("$ " + "{:,.0f}".format(pre).replace(",", ".")
                                      if pre else "no publicado"))
         print("     Zona       : " + (f.get("ciudad_entidad") or "?") + " / " + (f.get("departamento_entidad") or "?"))
+    _d = dias_desde(f.get("fecha_de_publicacion_del"))
+    if _d is not None:
+        print("    Publicado  : hace " + str(_d) + " dias  " + ("(ATENCION, verifique si sigue en plazo)" if _d > DIAS_MAXIMOS else ""))
         print("     Oferentes  : " + (f.get("conteo_de_respuestas_a_ofertas") or "0"))
         print("     Por que    : " + "; ".join(f["_razones"]))
         lk = link_de(f)
@@ -298,10 +343,11 @@ def main():
         escribir_csv(
             salida,
             ["score", "referencia", "entidad", "ciudad", "departamento",
-             "objeto", "presupuesto", "oferentes", "razones", "link"],
+             "objeto", "presupuesto", "dias_publicado", "oferentes", "razones", "link"],
             [[f["_score"], f.get("referencia_del_proceso"), f.get("entidad"),
               f.get("ciudad_entidad"), f.get("departamento_entidad"),
               objeto_limpio(f)[0], f.get("precio_base"),
+              dias_desde(f.get("fecha_de_publicacion_del")),
               f.get("conteo_de_respuestas_a_ofertas"),
               "; ".join(f["_razones"]), link_de(f)] for f in res])
         print("\n  Guardado: " + salida)
