@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Oportunidades de licitacion publica</title>
+<meta name="description" content="Detecta oportunidades de licitacion publica en Colombia a partir de los datos abiertos de SECOP II.">
+<style>
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  :root {
+    --azul: #0b3d5c; --azul2: #14506f; --linea: #dbe3e8; --fondo: #f1f4f6;
+    --verde: #1a7f37; --ambar: #bf8700; --rojo: #a40e26; --gris: #64748b;
+  }
+  body { margin: 0; font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+         background: var(--fondo); color: #1a1a1a; font-size: 15px; }
+
+  .barra { background: var(--azul); color: #fff; padding: 14px 16px;
+           position: sticky; top: 0; z-index: 10; box-shadow: 0 2px 6px rgba(0,0,0,.15); }
+  .barra h1 { margin: 0; font-size: 17px; font-weight: 600; }
+  .barra p { margin: 3px 0 0; font-size: 12px; opacity: .85; }
+  .enlaces { margin-top: 11px; display: flex; gap: 8px; flex-wrap: wrap; }
+  .enlaces a { color: #fff; background: rgba(255,255,255,.15); border: 1px solid rgba(255,255,255,.35);
+               padding: 7px 13px; border-radius: 6px; font-size: 13px; text-decoration: none; }
+  .enlaces a:hover, .enlaces a:active { background: rgba(255,255,255,.3); }
+
+  .envoltura { max-width: 1000px; margin: 0 auto; padding: 16px 14px 60px; }
+
+  .config { background: #fff; border: 1px solid var(--linea); border-radius: 8px;
+            padding: 14px; margin-bottom: 16px; }
+  .config h2 { margin: 0 0 10px; font-size: 15px; color: var(--azul); }
+  .campo { margin-bottom: 11px; }
+  .campo label { display: block; font-size: 12.5px; color: var(--gris); margin-bottom: 4px; }
+  .campo input, .campo textarea { width: 100%; border: 1px solid #cbd5e1; border-radius: 6px;
+    padding: 9px 11px; font-size: 15px; font-family: inherit; }
+  .campo textarea { min-height: 62px; resize: vertical; }
+  .fila { display: flex; gap: 10px; }
+  .fila .campo { flex: 1; }
+
+  .tarjetas { display: grid; grid-template-columns: repeat(4, 1fr); gap: 9px; margin-bottom: 16px; }
+  .tarjeta { background: #fff; border: 1px solid var(--linea); border-radius: 8px;
+             padding: 12px 8px; text-align: center; }
+  .tarjeta .n { font-size: 21px; font-weight: 600; color: var(--azul); display: block; }
+  .tarjeta .t { font-size: 10.5px; color: var(--gris); text-transform: uppercase; letter-spacing: .3px; }
+
+  .explica { background: #fff; border: 1px solid var(--linea); border-radius: 8px;
+             margin-bottom: 16px; font-size: 14px; }
+  .explica summary { padding: 13px 15px; cursor: pointer; color: var(--azul); font-weight: 600; }
+  .explica .cuerpo { padding: 0 15px 15px; line-height: 1.65; color: #334; }
+  .explica li { margin-bottom: 7px; }
+
+  .item { background: #fff; border: 1px solid var(--linea); border-radius: 8px;
+          padding: 13px; margin-bottom: 11px; border-left-width: 4px; border-left-style: solid; }
+  .item.alta { border-left-color: var(--verde); }
+  .item.media { border-left-color: var(--ambar); }
+  .item.baja { border-left-color: #b6c2cc; }
+  .item .cabeza { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+  .item .score { font-size: 20px; font-weight: 600; color: var(--azul); }
+  .item .ref { font-size: 12px; color: var(--gris); font-family: Consolas, monospace; }
+  .item .entidad { font-weight: 600; margin: 6px 0 3px; font-size: 15px; }
+  .item .objeto { color: #475569; font-size: 13.5px; line-height: 1.5; }
+  .item .meta { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 9px; font-size: 12.5px; }
+  .etiqueta { background: #eef3f6; color: #334; padding: 4px 9px; border-radius: 11px; }
+  .etiqueta.alerta { background: #fdf5f6; color: var(--rojo); font-weight: 600; }
+  .item .razones { font-size: 12px; color: var(--gris); margin-top: 7px; font-style: italic; }
+  .item .acciones { display: flex; gap: 8px; margin-top: 11px; flex-wrap: wrap; }
+  .btn { border: 1px solid #cbd5e1; background: #fff; color: #334155; padding: 9px 15px;
+         border-radius: 6px; font-size: 14px; cursor: pointer; text-decoration: none;
+         flex: 1; text-align: center; min-width: 110px; }
+  .btn.si { border-color: var(--verde); color: var(--verde); font-weight: 600; background: #f2f9f4; }
+  .btn.no { border-color: var(--rojo); color: var(--rojo); font-weight: 600; background: #fdf5f6; }
+  .btn.sec { border-color: var(--azul); color: var(--azul); }
+
+  .vacio { background: #fff; border: 1px dashed #cbd5e1; border-radius: 8px;
+           padding: 26px 16px; text-align: center; color: var(--gris); }
+  .cargando { background: #fff; border: 1px solid var(--linea); border-radius: 8px;
+              padding: 26px 16px; text-align: center; color: var(--azul); }
+  .pie { margin-top: 26px; font-size: 12px; color: #8b98a4; line-height: 1.6; }
+  .error { background: #fdf5f6; border: 1px solid #e8b4bd; color: var(--rojo);
+           padding: 13px 15px; border-radius: 8px; margin-bottom: 14px; font-size: 14px; }
+
+  @media (max-width: 600px) {
+    .tarjetas { grid-template-columns: repeat(2, 1fr); }
+    .fila { flex-direction: column; gap: 0; }
+    .barra h1 { font-size: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="barra">
+  <h1>Oportunidades de licitacion publica</h1>
+  <p>SECOP II &middot; datos abiertos del Estado</p>
+  <div class="enlaces">
+    <a href="#">Buscar ahora</a>
+    <a href="agente.html">Agente (IA gratis)</a>
+    <a href="#" id="verCtx">Ver contexto</a>
+  </div>
+</div>
+
+<div class="envoltura">
+
+  <details class="explica">
+    <summary>Como funciona esta aplicacion</summary>
+    <div class="cuerpo">
+      <p>Revisa los procesos de licitacion publica <b>abiertos</b> y muestra solo los que
+      podrian servirle. No es un buscador: lo que no encaja ya quedo descartado.</p>
+      <ul>
+        <li><b>El numero grande es la prioridad</b> (0 a 100). 60 o mas: encaja bien en sector,
+            zona y presupuesto. 45 o menos: coincidencia debil.</li>
+        <li><b>Por que aparece aqui</b> es el motivo del puntaje.</li>
+        <li><b>Sirvio / No sirvio</b>: marcalas. Eso hace que la proxima vez el filtro sea
+            mas preciso. Se guarda solo en este dispositivo.</li>
+      </ul>
+      <p><b>Lo que NO hace:</b> no presenta la postulacion, no dice si va a ganar, y no
+      reemplaza la lectura del pliego.</p>
+      <p style="color:#8b98a4"><b>Atencion:</b> "Abierto" en SECOP no significa que se pueda
+      licitar. El 60% de esos procesos se publico antes de 2025. Esta aplicacion penaliza
+      los viejos, pero <b>siempre verifique la fecha de cierre en SECOP</b>: el portal de
+      datos no la trae.</p>
+    </div>
+  </details>
+
+  <div class="config">
+    <h2>Su perfil de busqueda</h2>
+    <div class="campo">
+      <label>Nombre de la empresa</label>
+      <input id="empresa" placeholder="Constructora Ejemplo S.A.S.">
+    </div>
+    <div class="campo">
+      <label>Oficios que la empresa sabe hacer (uno por linea)</label>
+      <textarea id="palabras"></textarea>
+    </div>
+    <div class="fila">
+      <div class="campo"><label>Presupuesto minimo (COP)</label>
+        <input id="pmin" type="number" inputmode="numeric"></div>
+      <div class="campo"><label>Presupuesto maximo (COP)</label>
+        <input id="pmax" type="number" inputmode="numeric"></div>
+    </div>
+    <div class="campo">
+      <label>Departamentos donde opera (separados por coma)</label>
+      <input id="deps" placeholder="ANTIOQUIA, CUNDINAMARCA">
+    </div>
+    <div class="campo">
+      <label>Buscar solo procesos publicados en los ultimos (dias)</label>
+      <input id="dias" type="number" inputmode="numeric">
+    </div>
+    <div class="acciones" style="display:flex;gap:8px">
+      <button class="btn sec" id="btnBuscar">Buscar oportunidades</button>
+      <button class="btn" id="btnReset">Restablecer</button>
+    </div>
+  </div>
+
+  <div id="aviso"></div>
+  <div class="tarjetas" id="kpis" style="display:none">
+    <div class="tarjeta"><span class="n" id="kOpp">0</span><span class="t">Oportunidades</span></div>
+    <div class="tarjeta"><span class="n" id="kAlta">0</span><span class="t">Alta prioridad</span></div>
+    <div class="tarjeta"><span class="n" id="kValor">0</span><span class="t">Valor en juego</span></div>
+    <div class="tarjeta"><span class="n" id="kPrec">-</span><span class="t">Precision</span></div>
+  </div>
+
+  <div id="resultados"></div>
+
+  <p class="pie">
+    Datos: Plataforma Nacional de Contratacion (SECOP II), fuente abierta del Estado.
+    Informacion publica. Esta aplicacion prioriza oportunidades: <b>no garantiza
+    adjudicacion</b> y no sustituye la revision tecnica del pliego.<br>
+    Las marcas "Sirvio / No sirvio" quedan guardadas solo en este navegador.
+  </p>
+</div>
+
+<script type="module" src="app.js"></script>
+<script type="module">
+import { PERFIL_POR_DEFECTO, CONTEXTO } from "./contexto.js";
+import { traerProcesos, analizar, leerMarcas, marcar, precision, objetoLimpio } from "./app.js";
+
+const $ = (id) => document.getElementById(id);
+const CLAVE_CFG = "radar_cfg_v1";
+
+function cargarCfg() {
+  let c = {};
+  try { c = JSON.parse(localStorage.getItem(CLAVE_CFG) || "{}"); } catch {}
+  const p = Object.assign({}, PERFIL_POR_DEFECTO, c);
+  $("empresa").value = p.empresa;
+  $("palabras").value = p.palabras_clave.join("\n");
+  $("pmin").value = p.precio_min;
+  $("pmax").value = p.precio_max;
+  $("deps").value = p.departamentos.join(", ");
+  $("dias").value = p.dias_maximos;
+  return p;
+}
+
+function leerCfg() {
+  const p = {
+    empresa: $("empresa").value.trim() || "Mi empresa",
+    palabras_clave: $("palabras").value.split("\n").map(s => s.trim().toLowerCase()).filter(Boolean),
+    precio_min: parseInt($("pmin").value, 10) || 0,
+    precio_max: parseInt($("pmax").value, 10) || 0,
+    departamentos: $("deps").value.split(",").map(s => s.trim().toUpperCase()).filter(Boolean),
+    dias_maximos: parseInt($("dias").value, 10) || 90,
+  };
+  localStorage.setItem(CLAVE_CFG, JSON.stringify(p));
+  return p;
+}
+
+function guardarMarca(ref, estado) {
+  marcar(ref, estado);
+  pintar(ultimos);
+}
+
+let ultimos = [];
+
+function pintar(filas) {
+  const cont = $("resultados");
+  const marcas = leerMarcas();
+  const pr = precision(marcas);
+  $("kpis").style.display = "grid";
+  $("kOpp").textContent = filas.length;
+  $("kAlta").textContent = filas.filter(f => f.score >= 60).length;
+  $("kValor").textContent = "$ " + filas.reduce((a, f) => a + (parseInt(String(f.precio_base || "0").replace(/\D/g, ""), 10) || 0), 0)
+    .toLocaleString("es-CO");
+  $("kPrec").textContent = pr.precision === null ? "-" : Math.round(pr.precision) + "%";
+
+  if (!filas.length) {
+    cont.innerHTML = '<div class="vacio">No salio ninguna oportunidad con ese perfil.<br>' +
+      'Pruebe con menos requisitos, o mas dias de antiguedad.</div>';
+    return;
+  }
+
+  cont.innerHTML = filas.map(f => {
+    const clase = f.score >= 60 ? "alta" : (f.score >= 50 ? "media" : "baja");
+    const dias = f.dias;
+    const alerta = dias !== null && dias > 90;
+    const ya = marcas[f.referencia_del_proceso];
+    const acciones = ya
+      ? '<span class="btn ' + (ya.estado === "util" ? "si" : "no") + '" style="pointer-events:none">Ya marcaste: ' +
+        (ya.estado === "util" ? "Sirvio" : "No sirvio") + '</span>'
+      : '<button class="btn si" data-ref="' + esc(f.referencia_del_proceso) + '" data-e="util">Sirvio</button>' +
+        '<button class="btn no" data-ref="' + esc(f.referencia_del_proceso) + '" data-e="descartado">No sirvio</button>';
+    return '<div class="item ' + clase + '">' +
+      '<div class="cabeza"><span class="score">' + f.score + '</span>' +
+      '<span class="ref">' + esc(f.referencia_del_proceso || "?") + '</span></div>' +
+      '<div class="entidad">' + esc(f.entidad || "?") + '</div>' +
+      '<div class="objeto">' + esc(f.objeto) + '</div>' +
+      '<div class="meta">' +
+        '<span class="etiqueta">$ ' + (parseInt(String(f.precio_base || "0").replace(/\D/g, ""), 10) || 0).toLocaleString("es-CO") + '</span>' +
+        '<span class="etiqueta">' + esc(f.ciudad_entidad || "?") + '</span>' +
+        (dias !== null ? '<span class="etiqueta' + (alerta ? " alerta" : "") + '">' +
+          (alerta ? "ATENCION " : "") + "hace " + dias + " dias</span>" : "") +
+      '</div>' +
+      '<div class="razones">' + esc(f.razones.join("; ")) + '</div>' +
+      (f.link ? '<div class="acciones"><a class="btn sec" href="' + esc(f.link) +
+        '" target="_blank" rel="noopener">Ver en SECOP</a></div>' : '') +
+      '<div class="acciones">' + acciones + '</div>' +
+    '</div>';
+  }).join("");
+}
+
+function esc(s) {
+  return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+
+async function buscar() {
+  const cfg = leerCfg();
+  const caja = $("resultados");
+  $("aviso").innerHTML = "";
+  caja.innerHTML = '<div class="cargando">Consultando datos.gov.co...</div>';
+  try {
+    const filas = await traerProcesos("estado_de_apertura_del_proceso='Abierto'", 800);
+    const out = analizar(filas, cfg);
+    out.sort((a, b) => {
+      const da = a.dias === null ? 1e9 : a.dias, db = b.dias === null ? 1e9 : b.dias;
+      return (da - db) || (b.score - a.score);
+    });
+    ultimos = out.slice(0, 40);
+    pintar(ultimos);
+  } catch (err) {
+    caja.innerHTML = "";
+    $("aviso").innerHTML = '<div class="error">No se pudo consultar: ' + esc(err.message) +
+      '<br>Revise la conexion a internet.</div>';
+  }
+}
+
+$("resultados").addEventListener("click", (e) => {
+  const b = e.target.closest("button[data-ref]");
+  if (b) guardarMarca(b.dataset.ref, b.dataset.e);
+});
+$("btnBuscar").addEventListener("click", buscar);
+$("btnReset").addEventListener("click", () => {
+  localStorage.removeItem(CLAVE_CFG);
+  localStorage.removeItem("radar_marcas_v1");
+  cargarCfg();
+  $("resultados").innerHTML = "";
+  $("kpis").style.display = "none";
+});
+$("verCtx").addEventListener("click", (e) => {
+  e.preventDefault();
+  window.open("contexto.txt", "_blank");
+});
+
+cargarCfg();
+buscar();
+</script>
+</body>
+</html>

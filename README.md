@@ -132,6 +132,69 @@ Los tres dan el mismo sintoma: la tarea dice `CORRECTO` y no pasa nada.
 El tercero es el que importa en produccion: **el lunes va a fallar si alguien
 tiene el CSV abierto en Excel.** Con escritura atomica y reintentos, ya no.
 
+## Version web (la que se abre en el celu)
+
+Hay una segunda version, en `web/`, que **no necesita servidor ni esta PC**. El
+navegador consulta la API publica de datos.gov.co directamente, porque esa API
+devuelve `Access-Control-Allow-Origin: *`. Por eso puede publicarse como pagina
+web y abrirse desde cualquier telefono.
+
+```
+web/
+  index.html      la aplicacion, pensada para celular
+  agente.html     la ventana del agente con IA gratuita
+  app.js          la logica del radar portada a JavaScript
+  contexto.js     el contexto que se le inyecta al agente
+  servir.py       para probarla en local
+```
+
+Para probarla en este equipo:
+
+```bash
+python web/servir.py
+# http://localhost:8080
+# y desde el celu, en la misma red:  http://<IP-del-PC>:8080
+```
+
+La logica es la misma que `src/radar.py`, portada. Se comprobo con 15 pruebas en
+Node: limpieza de nombres sucios, puntaje, descarte por antiguedad, construccion
+de la consulta SoQL e interpretacion de preguntas.
+
+Que cambia respecto a la version de escritorio:
+
+| | Escritorio | Web |
+|---|---|---|
+| Necesita este PC encendido | Si | **No** |
+| Costo | Cero | **Cero** |
+| Corre sola cada lunes | Si | No: consulta al abrir |
+| Genera PDF | Si | No (el navegador puede imprimir) |
+| Las marcas se comparten | Si, en el repositorio | No: quedan en cada navegador |
+| Agente con IA gratis | Si | Si |
+
+Lo que se pierde son las dos funciones que dependen de un servidor: la corrida
+programada y el historico compartido entre dispositivos. Para mostrar y
+explicar, la version web es mejor.
+
+### Publicarla para mostrar desde el celu
+
+El repositorio es privado, y GitHub Pages gratuito solo funciona en repositorios
+publicos. Los datos que usa la app son publicos y no hay ninguna clave, asi que
+puede ir en un repositorio publico sin riesgo.
+
+Opcion A - repositorio publico (gratis, siempre en linea):
+
+```bash
+# en GitHub, crear un repositorio nuevo, publico, llamado Trabajos-web
+cd ..\Trabajos
+git remote add web https://github.com/oscarFlerez/Trabajos-web.git
+git subtree push --prefix web web main
+```
+
+Opcion B - sin salir de GitHub: Settings -> Pages -> Source: rama `gh-pages`,
+carpeta `/ (root)`. Son dos clics, pero pide que el repositorio sea publico.
+
+En los dos casos queda en `https://oscarflerez.github.io/Trabajos-web/`.
+
 ## Estructura
 
 ```
