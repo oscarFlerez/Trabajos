@@ -1,0 +1,50 @@
+# ---------------------------------------------------------------------------
+# PUBLICAR EL SITIO
+#
+# Que existiera una rama `gh-pages` hizo que todo pareciera roto sin reason:
+# Pages servia esa rama, uno editaba `main`, y los cambios no se veian nunca.
+# El sintoma era desconcertante: el commit estaba en GitHub, el raw tenia los
+# cambios, y la web servia la version vieja.
+#
+# Este workflow elimina esa clase de problema: cada push a `main` recompone
+# `web/` y lo publica. Lo que esta en `web/` es exactamente lo que se sirve,
+# sin rama intermedia que se pueda desincronizar.
+#
+# Tambien evita tener que pulsar "Deploy" a mano en Settings > Pages, que es
+# lo que hacia falta cada vez.
+#
+# Requiere que en Settings > Pages la fuente sea "GitHub Actions".
+# ---------------------------------------------------------------------------
+name: Publicar sitio
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# No descomprimir si dos pushes llegan juntos: el ultimo gana.
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  publicar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/configure-pages@v5
+
+      - name: Publicar
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: web
+
+      - name: Desplegar en GitHub Pages
+        id: desplegar
+        uses: actions/deploy-pages@v4
