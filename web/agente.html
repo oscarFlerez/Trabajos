@@ -45,6 +45,9 @@
           border: 1px solid #cbd5e1; color: #64748b; padding: 2px 7px; border-radius: 10px; }
   .ia-b.verde { background: #f2f9f4; border-color: #1a7f37; color: #1a7f37; }
   .ia-b.libre { background: #eef5fb; border-color: #0b3d5c; color: #0b3d5c; }
+/* Botones cuya IAs no se pudo comprobar: se distinguen a proposito, para no
+   leer "abre con el texto" donde no esta medido. */
+.ia-b.gris { background: #f8fafc; border-color: #cbd5e1; color: #94a3b8; }
 
   .grupo { font-size: 12px; font-weight: 700; color: #0b3d5c; text-transform: uppercase;
            letter-spacing: .5px; margin: 18px 0 9px; }
@@ -173,7 +176,15 @@ const SEPARADOR = "\n\n---\n\nPREGUNTA DEL USUARIO:\n";
         no se comprobó nunca y no era cierto)
 
    You.com, Mistral, HuggingChat y Copilot siguen en la lista, pero en el
-   grupo de cuenta, que es donde de verdad están. Abacus es de pago.
+   grupo de cuenta, que es donde de verdad están. Abacus es de pago y se quitó.
+   Gemini se quitó también: se probó y abre sin nada escrito.
+
+   Sobre las etiquetas: solo 3 botones están **comprobados** (DuckDuckGo,
+   Perplexity y ChatGPT). Las de cuenta están ahí porque se sabe que piden
+   registro, no porque se haya visto que el texto llega: eso no se pudo
+   comprobar sin una cuenta. Por eso su botón no dice "abre con el texto" sino
+   "con tu cuenta". Afirmar lo que no se midio es justamente lo que hizo que esta
+   pagina dijera "Sin registro" en botones que piden cuenta.
 
    Un puente hacia una IA externa no se puede comprobar con fetch: casi todas
    dibujan el texto con JavaScript, así que no aparece en la respuesta del
@@ -181,31 +192,36 @@ const SEPARADOR = "\n\n---\n\nPREGUNTA DEL USUARIO:\n";
 
 const IAS_SIN_CUENTA = [
   { n: "DuckDuckGo AI", base: "https://duckduckgo.com/?", p: "q", extra: "ia=chat&",
-    t: "Sin registro" },
+    t: "Sin registro", b: "abre con el texto", ok: true },
   { n: "Perplexity", base: "https://www.perplexity.ai/search?", p: "q", extra: "",
-    t: "Sin registro" },
+    t: "Sin registro", b: "abre con el texto", ok: true },
 ];
 
 const IAS_CON_CUENTA = [
-  { n: "ChatGPT", base: "https://chatgpt.com/?", p: "q", extra: "", t: "OpenAI" },
-  { n: "Claude", base: "https://claude.ai/new?", p: "q", extra: "", t: "Anthropic" },
+  { n: "ChatGPT", base: "https://chatgpt.com/?", p: "q", extra: "",
+    t: "OpenAI", b: "abre con el texto", ok: true },
+  { n: "Claude", base: "https://claude.ai/new?", p: "q", extra: "",
+    t: "Anthropic", b: "con tu cuenta", ok: false },
   { n: "Copilot", base: "https://copilot.microsoft.com/?", p: "q", extra: "",
-    t: "Microsoft" },
-  { n: "You.com", base: "https://you.com/search?", p: "q", extra: "", t: "Con registro" },
+    t: "Microsoft", b: "con tu cuenta", ok: false },
+  { n: "You.com", base: "https://you.com/search?", p: "q", extra: "",
+    t: "Con registro", b: "con tu cuenta", ok: false },
   { n: "Mistral Le Chat", base: "https://chat.mistral.ai/chat?", p: "q", extra: "",
-    t: "Con registro" },
+    t: "Con registro", b: "con tu cuenta", ok: false },
   { n: "HuggingChat", base: "https://huggingface.co/chat/?", p: "q", extra: "",
-    t: "Modelos abiertos" },
-  { n: "Gemini", base: "https://gemini.google.com/app?", p: "q", extra: "",
-    t: "Google" },
+    t: "Modelos abiertos", b: "con tu cuenta", ok: false },
 ];
 
 function htmlDe(ia, codificada) {
   const url = (ia.base + ia.extra + ia.p + "=" + codificada).replace(/&/g, "&amp;");
+  /* El boton dice lo que se sabe de esa IA, no lo que se supone. Poner
+     "abre con el texto" en las que no se han probado seria repetir el error
+     que motivo esta correccion. */
+  const clase = ia.ok ? "ia-b verde" : "ia-b gris";
   return '<a class="ia" href="' + url + '" target="_blank" rel="noopener">' +
     '<span class="ia-n">' + ia.n + "</span>" +
     '<span class="ia-t">' + ia.t + "</span>" +
-    '<span class="ia-b verde">abre con el texto</span></a>';
+    '<span class="' + clase + '">' + ia.b + "</span></a>";
 }
 
 function armarIas(texto) {
