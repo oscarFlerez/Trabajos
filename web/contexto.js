@@ -109,6 +109,33 @@ export const PERFIL_POR_DEFECTO = {
   excluir: [
     "dotacion", "alimento", "medicamento", "fotocopia", "papeleria",
     "capacitacion", "licenciamiento", "combustible",
+
+    /* Salud. OJO: NO anadir "salud" suelta. Medido el 30/09/2026 sobre 6.000
+       procesos abiertos: "salud" aparece en el 27% de las coincidencias del
+       sector, porque "seguridad y salud en el trabajo" es parte de todo
+       contrato de obra. Estos tres si son inequivocos: cortan 14 de 194,
+       todos contratos de profesionales de la salud que entraban por la
+       palabra "intervencion" (una intervencion dental no es una
+       intervencion de obra). */
+    "odontolog", "quirurgic", "psicolog",
+  ],
+
+  /* Se miran SOLO en el titulo, no en la descripcion. Hay procesos que son
+     obra de verdad y aun asi mencionan "subsidio" en la descripcion
+     (medido el 30/09/2026 sobre 6.000 abiertos): D-416-2026, $162.270.460,
+     vivienda en Palermo Huila. Si la palabra se buscara en cualquier campo,
+     esa oportunidad desapareceria.
+
+     Estas son transferencias de plata que parecen obra porque el texto habla
+     de acueducto: "TRANSFERENCIA DE RECURSOS A LA EMPRESA MUNICIPAL DE
+     AGUAS Y ASEO ... PARA LOS SUBSIDIOS". Es dinero, no construccion. */
+  excluir_titulo: [
+    "transferencia de recursos",
+    "transferencia y o recepcion de recursos",
+    "transferencia y/o recepcion de recursos",
+    "otorgamiento de subsidios",
+    "transferencia subsidios",
+    "traspaso de recursos",
   ],
   departamentos: ["ANTIOQUIA", "CUNDINAMARCA", "DISTRITO CAPITAL", "ATLANTICO", "SANTANDER", "CALDAS"],
   precio_min: 80000000,

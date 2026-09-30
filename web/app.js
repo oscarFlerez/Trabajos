@@ -68,8 +68,20 @@ export function objetoLimpio(f) {
   const desc = (f.descripci_n_del_procedimiento || "").trim();
   if (!nom) return { texto: desc || "(sin objeto)", nota: "sin nombre, se uso la descripcion" };
 
-  const soloNumeros = nom.replace(/copia/gi, "").trim();
-  if (soloNumeros && /^[0-9\-\s/.]+$/.test(soloNumeros)) {
+  /* Que es un codigo y no una descripcion.
+     Antes solo se aceptaban codigos sin letras (`/^[0-9\-\s/.]+$/`), asi que
+     "D-416-2026", "ICCU-CTO-1479-2025" o "CMM-2026-000092" se tomaban por
+     descripcion y la tarjeta mostraba el codigo repetido donde deberia ir el
+     objeto. Medido el 30/09/2026 sobre 5.000 procesos abiertos: 129 titulos
+     cambian de clasificacion, ninguno queda sin descripcion a la que recurrir
+     y no hay ninguna regresion. Un codigo no tiene espacios, trae al menos
+     un digito y es alfanumerico con separadores; "CONTRATO 2026 DE OBRA" no
+     cuenta como codigo porque tiene palabras. */
+  const sinEspacios = nom.replace(/copia/gi, "").trim()
+    .replace(/\s*-\s*/g, "-").replace(/\s*\.\s*/g, ".").trim();
+  const esCodigo = sinEspacios && !/\s/.test(sinEspacios) && /\d/.test(sinEspacios) &&
+    /^[A-Za-z0-9]+([-.][A-Za-z0-9]+)*$/.test(sinEspacios);
+  if (esCodigo) {
     if (desc) return { texto: desc, nota: "el nombre era un codigo, se uso la descripcion" };
     return { texto: nom, nota: "el nombre es un codigo y no hay descripcion" };
   }
@@ -108,6 +120,15 @@ export function puntuar(f, p) {
   const texto = ((f.nombre_del_procedimiento || "") + " " +
                  (f.descripci_n_del_procedimiento || "")).toLowerCase();
   if (!texto.trim()) return { score: 0, razones: ["sin descripcion"] };
+
+  /* Las transferencias de plata se descartan mirando solo el titulo. Ver la
+     nota de `excluir_titulo` en contexto.js: buscarlas en la descripcion
+     borraria obras reales que mencionan "subsidio" de pasada. */
+  const titulo = (f.nombre_del_procedimiento || "").toLowerCase();
+  if ((p.excluir_titulo || []).some((x) => titulo.includes(x.toLowerCase()))) {
+    return { score: 0, razones: [] };
+  }
+
   if (p.excluir.some((x) => texto.includes(x.toLowerCase()))) return { score: 0, razones: [] };
 
   const aciertos = p.palabras_clave.filter((k) => texto.includes(k.toLowerCase()));

@@ -1,7 +1,7 @@
 # ---------------------------------------------------------------------------
 # PUBLICAR EL SITIO
 #
-# Que existiera una rama `gh-pages` hizo que todo pareciera roto sin reason:
+# Que existiera una rama `gh-pages` hacia que todo pareciera roto sin explicacion:
 # Pages servia esa rama, uno editaba `main`, y los cambios no se veian nunca.
 # El sintoma era desconcertante: el commit estaba en GitHub, el raw tenia los
 # cambios, y la web servia la version vieja.
@@ -27,7 +27,7 @@ permissions:
   pages: write
   id-token: write
 
-# No descomprimir si dos pushes llegan juntos: el ultimo gana.
+# Si llegan dos pushes juntos, se cancela el anterior: el ultimo gana.
 concurrency:
   group: pages
   cancel-in-progress: true
@@ -35,6 +35,14 @@ concurrency:
 jobs:
   publicar:
     runs-on: ubuntu-latest
+    # `actions/deploy-pages` EXIGE este bloque. Sin el, falla con
+    # "HttpError: Missing environment. Ensure your workflow's deployment job
+    # has an environment." Pasaron 3 corridas fallidas por esto, el 30/09/2026.
+    # Declararlo aqui evita depender de que el environment exista por
+    #timestamp de cuando se cambio la fuente de Pages.
+    environment:
+      name: github-pages
+      url: ${{ steps.desplegar.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
 

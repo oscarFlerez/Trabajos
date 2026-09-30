@@ -58,6 +58,30 @@ PERFIL = {
         "dotacion", "alimento", "medicamento", "fotocopia", "papeleria",
         "capacitacion", "software", "licenciamiento", "servicio de limpieza",
         "seguridad fisica", "combustible",
+        # Salud. OJO: NO añadir "salud" suelta. Medido el 30/09/2026 sobre
+        # 6.000 procesos abiertos: "salud" aparece en el 27% de las
+        # coincidencias del sector, porque "seguridad y salud en el trabajo"
+        # es parte de todo contrato de obra. Estos tres si son inequivocos:
+        # cortan 14 de 194, todos contratos de profesionales de la salud que
+        # entraban por la palabra "intervencion" (una intervencion dental no
+        # es una intervencion de obra).
+        "odontolog", "quirurgic", "psicolog",
+    ],
+    # Se miran SOLO en el titulo, no en la descripcion. Hay procesos que son
+    # obra de verdad y aun asi mencionan "subsidio" en la descripcion
+    # (medido el 30/09/2026 sobre 6.000 abiertos): D-416-2026, $162.270.460,
+    # vivienda en Palermo Huila, publicada hace 16 dias. Si la palabra se
+    # buscara en cualquier campo, esa oportunidad desapareceria.
+    # Estas son transferencias de plata que parecen obra porque el texto habla
+    # de acueducto: "TRANSFERENCIA DE RECURSOS A LA EMPRESA MUNICIPAL DE
+    # AGUAS Y ASEO ... PARA LOS SUBSIDIOS". Es dinero, no constructors.
+    "excluir_titulo": [
+        "transferencia de recursos",
+        "transferencia y o recepcion de recursos",
+        "transferencia y/o recepcion de recursos",
+        "otorgamiento de subsidios",
+        "transferencia subsidios",
+        "traspaso de recursos",
     ],
     "departamentos": ["ANTIOQUIA", "CUNDINAMARCA", "DISTRITO CAPITAL", "ATLANTICO", "SANTANDER", "CALDAS"],
     "precio_min": 80_000_000,
@@ -184,8 +208,18 @@ def objeto_limpio(f):
         return (desc or "(sin objeto)"), "no venia nombre, se uso la descripcion"
 
     # Solo numeros, guiones o la palabra "copia": es un codigo interno.
-    sin_numeros = nom.replace("COPIA", "").replace("copia", "").strip()
-    if sin_numeros and all(c in "0123456789- /." for c in sin_numeros):
+    # Un codigo no tiene espacios, trae al menos un digito y es alfanumerico
+    # con separadores. Antes solo se aceptaban codigos SIN letras, asi que
+    # "D-416-2026" o "ICCU-CTO-1479-2025" se tomaban por descripcion y la
+    # tarjeta mostraba el codigo repetido donde va el objeto. Medido el
+    # 30/09/2026 sobre 5.000 procesos: 129 titulos cambian, ninguno queda
+    # sin descripcion y no hay regresiones. "CONTRATO 2026 DE OBRA" no cuenta
+    # como codigo porque tiene palabras.
+    sin_espacios = re.sub(r"[ .]", "-", nom.replace("copia", "").strip()).strip("-.")
+    es_codigo = (bool(sin_espacios) and " " not in sin_espacios
+                and any(c.isdigit() for c in sin_espacios)
+                and re.fullmatch(r"[A-Za-z0-9]+([-.][A-Za-z0-9]+)*", sin_espacios))
+    if es_codigo:
         if desc:
             return desc, "el nombre era un codigo, se uso la descripcion"
         return nom, "el nombre es un codigo y no hay descripcion"
@@ -244,6 +278,13 @@ def puntuar(f, p):
              (f.get("descripci_n_del_procedimiento") or "")).lower()
     if not texto.strip():
         return 0, ["sin descripcion"]
+
+    # Las transferencias de plata se descartan mirando solo el titulo. Ver la
+    # nota de "excluir_titulo" en PERFIL: buscarlas en la descripcion borraria
+    # obras reales que mencionan "subsidio" de pasada.
+    titulo = (f.get("nombre_del_procedimiento") or "").lower()
+    if any(x in titulo for x in p["excluir_titulo"]):
+        return 0, []
 
     if any(x in texto for x in p["excluir"]):
         return 0, []
@@ -363,8 +404,10 @@ def diagnostico(filas, p):
     """Embudo del filtro. Responde la unica pregunta que importa cuando no
     sale nada: 'no hay oportunidades' o 'el perfil esta cerrado de mas'."""
     def sector_de(f):
-        t = ((f.get("nombre_del_procedimiento") or "") + " " +
-             (f.get("descripci_n_del_procedimiento") or "")).lower()
+        titulo = (f.get("nombre_del_procedimiento") or "").lower()
+        if any(x in titulo for x in p["excluir_titulo"]):
+            return None
+        t = (titulo + " " + (f.get("descripci_n_del_procedimiento") or "").lower())
         if any(x in t for x in p["excluir"]):
             return None
         return [k for k in p["palabras_clave"] if k in t]
