@@ -190,14 +190,18 @@ function cargarCfg() {
 }
 
 function leerCfg() {
-  const p = {
+  /* Merge con PERFIL_POR_DEFECTO, no objeto nuevo. Antes se armaba un objeto
+     con solo 6 campos del formulario, y se perdian 'excluir', los pesos y el
+     resto: `puntuar` hace `p.excluir.some(...)` y eso reventaba con
+     "Cannot read properties of undefined". El sitio no hallaba nada. */
+  const p = Object.assign({}, PERFIL_POR_DEFECTO, {
     empresa: $("empresa").value.trim() || "Mi empresa",
     palabras_clave: $("palabras").value.split("\n").map(s => s.trim().toLowerCase()).filter(Boolean),
     precio_min: parseInt($("pmin").value, 10) || 0,
     precio_max: parseInt($("pmax").value, 10) || 0,
     departamentos: $("deps").value.split(",").map(s => s.trim().toUpperCase()).filter(Boolean),
     dias_maximos: parseInt($("dias").value, 10) || 90,
-  };
+  });
   localStorage.setItem(CLAVE_CFG, JSON.stringify(p));
   return p;
 }
@@ -266,7 +270,7 @@ async function buscar() {
   $("aviso").innerHTML = "";
   caja.innerHTML = '<div class="cargando">Consultando datos.gov.co...</div>';
   try {
-    const filas = await traerProcesos("estado_de_apertura_del_proceso='Abierto'", 800);
+    const filas = await traerProcesos("estado_de_apertura_del_proceso='Abierto'", 5000);
     const out = analizar(filas, cfg);
     out.sort((a, b) => {
       const da = a.dias === null ? 1e9 : a.dias, db = b.dias === null ? 1e9 : b.dias;
