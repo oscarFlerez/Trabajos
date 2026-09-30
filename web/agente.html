@@ -99,13 +99,13 @@
   <div class="caja">
     <h2><span class="num">2</span>Abre tu IA con la consulta ya escrita</h2>
     <p class="sub">Toca el boton de la IA que uses: se abre en otra pestana con tu pregunta
-       y el contexto ya en el cuadro. Si a alguna se le abre vacio, es que no acepta el
-       parametro de la direccion; para esa usa <b>Copiar</b> del paso 3.</p>
+       y el contexto ya en el cuadro. Las de arriba se comprobaron una por una
+       el 30/09/2026. Si alguna se le abriera vacio, usa <b>Copiar</b> del paso 3.</p>
 
-    <div class="grupo">Sin cuenta, gratis <span>&mdash; la mas comoda. Meta AI abre un aviso de iniciar sesion: se cierra y sigue funcionando</span></div>
+    <div class="grupo">Sin cuenta, gratis <span>&mdash; probadas una por una: abren con el contexto y la pregunta ya escritos</span></div>
     <div class="ias" id="iasSin"></div>
 
-    <div class="grupo">Con cuenta o plan gratuito <span>&mdash; requieren registrarse una vez</span></div>
+    <div class="grupo">Con cuenta <span>&mdash; requieren registrarse una vez. Si ya tienes cuenta, funcionan</span></div>
     <div class="ias" id="iasCon"></div>
   </div>
 
@@ -157,36 +157,47 @@ const okCopia = document.getElementById("okCopia");
    por el boton Copiar del paso 3. */
 const SEPARADOR = "\n\n---\n\nPREGUNTA DEL USUARIO:\n";
 
+/* La lista se recortó el 30/09/2026 después de probarlas UNA POR UNA a mano.
+   Antes había 15 y la página afirmaba "Sin registro" en botones que en
+   realidad piden cuenta, o que ni siquiera abren el chat. Eso ya no puede
+   pasar: cada botón que sigue aquí tiene su estado comprobado.
+
+   Lo que se quitó y por qué, para no volver a añadirlas por error:
+
+     Qwen      pide iniciar sesión y el chat queda vacío
+     Kimi      página en chino, no llega el contexto y asoma un pop-up
+     LMArena   no envía nada
+     DeepSeek  pide iniciar sesión
+     Meta AI   pide iniciar sesión y no trae nada
+       (la página decía que el aviso "se cierra y sigue funcionando": falso,
+        no se comprobó nunca y no era cierto)
+
+   You.com, Mistral, HuggingChat y Copilot siguen en la lista, pero en el
+   grupo de cuenta, que es donde de verdad están. Abacus es de pago.
+
+   Un puente hacia una IA externa no se puede comprobar con fetch: casi todas
+   dibujan el texto con JavaScript, así que no aparece en la respuesta del
+   servidor. Solo sirve tocar el botón. */
+
 const IAS_SIN_CUENTA = [
   { n: "DuckDuckGo AI", base: "https://duckduckgo.com/?", p: "q", extra: "ia=chat&",
     t: "Sin registro" },
   { n: "Perplexity", base: "https://www.perplexity.ai/search?", p: "q", extra: "",
     t: "Sin registro" },
-  { n: "You.com", base: "https://you.com/search?", p: "q", extra: "", t: "Sin registro" },
-  { n: "Mistral Le Chat", base: "https://chat.mistral.ai/chat?", p: "q", extra: "",
-    t: "Sin registro" },
-  { n: "HuggingChat", base: "https://huggingface.co/chat/?", p: "q", extra: "",
-    t: "Modelos abiertos" },
-  { n: "Abacus ChatLLM", base: "https://chatllm.abacus.ai/?", p: "q", extra: "",
-    t: "Sin registro" },
-  { n: "Qwen", base: "https://chat.qwen.ai/?", p: "q", extra: "", t: "Sin registro" },
-  { n: "Kimi", base: "https://www.kimi.com/?", p: "q", extra: "", t: "Sin registro" },
-  { n: "LMArena", base: "https://lmarena.ai/?", p: "q", extra: "",
-    t: "Compara modelos" },
-  { n: "DeepSeek", base: "https://chat.deepseek.com/?", p: "q", extra: "",
-    t: "Sin registro" },
-  /* Pide iniciar sesion, pero el aviso se cierra y deja usar el chat sin cuenta. */
-  { n: "Meta AI", base: "https://www.meta.ai/?", p: "q", extra: "",
-    t: "Sin registro, cierra el aviso" },
 ];
 
 const IAS_CON_CUENTA = [
-  { n: "Gemini", base: "https://gemini.google.com/app?", p: "q", extra: "",
-    t: "Google" },
   { n: "ChatGPT", base: "https://chatgpt.com/?", p: "q", extra: "", t: "OpenAI" },
+  { n: "Claude", base: "https://claude.ai/new?", p: "q", extra: "", t: "Anthropic" },
   { n: "Copilot", base: "https://copilot.microsoft.com/?", p: "q", extra: "",
     t: "Microsoft" },
-  { n: "Claude", base: "https://claude.ai/new?", p: "q", extra: "", t: "Anthropic" },
+  { n: "You.com", base: "https://you.com/search?", p: "q", extra: "", t: "Con registro" },
+  { n: "Mistral Le Chat", base: "https://chat.mistral.ai/chat?", p: "q", extra: "",
+    t: "Con registro" },
+  { n: "HuggingChat", base: "https://huggingface.co/chat/?", p: "q", extra: "",
+    t: "Modelos abiertos" },
+  { n: "Gemini", base: "https://gemini.google.com/app?", p: "q", extra: "",
+    t: "Google" },
 ];
 
 function htmlDe(ia, codificada) {
