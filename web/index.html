@@ -93,7 +93,6 @@
   <div class="enlaces">
     <a href="#">Buscar ahora</a>
     <a href="agente.html">Agente (tu IA)</a>
-    <a href="#" id="verCtx">Ver contexto</a>
   </div>
 </div>
 
@@ -170,7 +169,7 @@
 
 <script type="module" src="app.js"></script>
 <script type="module">
-import { PERFIL_POR_DEFECTO, CONTEXTO } from "./contexto.js";
+import { PERFIL_POR_DEFECTO } from "./contexto.js";
 import { traerProcesos, analizar, leerMarcas, marcar, precision, objetoLimpio } from "./app.js";
 
 const $ = (id) => document.getElementById(id);
@@ -297,11 +296,6 @@ $("btnReset").addEventListener("click", () => {
   $("resultados").innerHTML = "";
   $("kpis").style.display = "none";
 });
-$("verCtx").addEventListener("click", (e) => {
-  e.preventDefault();
-  window.open("contexto.txt", "_blank");
-});
-
 cargarCfg();
 buscar();
 </script>
