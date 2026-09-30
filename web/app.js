@@ -113,26 +113,38 @@ export function puntuar(f, p) {
   const aciertos = p.palabras_clave.filter((k) => texto.includes(k.toLowerCase()));
   if (!aciertos.length) return { score: 0, razones: [] };
 
-  let puntos = Math.min(aciertos.length / 2, 1) * 60;
+  let puntos = Math.min(aciertos.length / 2, 1) * p.peso_sector;
   const razones = ["sector: " + aciertos.slice(0, 3).join(", ")];
 
   const dep = (f.departamento_entidad || "").toUpperCase();
   if (p.departamentos.some((d) => dep.includes(d.toUpperCase()))) {
-    puntos += 20;
+    puntos += p.peso_zona;
     razones.push("zona objetivo");
   } else {
-    puntos += 5;
+    puntos += p.peso_fuera_de_zona;
   }
 
   const precio = entero(f.precio_base);
   if (precio === 0) {
     razones.push("presupuesto no publicado");
   } else if (precio >= p.precio_min && precio <= p.precio_max) {
-    puntos += 20;
+    puntos += p.peso_presupuesto;
     razones.push("presupuesto encaja");
   } else if (precio > p.precio_max) {
-    puntos -= 15;
+    puntos -= p.penalty_sobre_precio;
     razones.push("muy por encima del rango");
+  }
+
+  /* COMPETENCIA: no se puntua, porque no se puede saber. El contador de
+     oferentes tiene dato en el 0,0% de los procesos abiertos (medido sobre
+     3.000 el 30/09/2026) y `proveedores_que_manifestaron` tambien. Antes el
+     codigo daba +10 cuando venía en cero, o sea que practicamente todo
+     recibia puntos y se le decia "poca competencia" sin base. La penalizacion
+     por mucha competencia si se conserva: esa es verdad cuando aparece. */
+  const oferentes = entero(f.conteo_de_respuestas_a_ofertas);
+  if (oferentes > p.aviso_si_oferentes) {
+    puntos -= p.penalty_sobre_precio;
+    razones.push("MUCHA competencia: " + oferentes + " oferentes");
   }
 
   /* "Abierto" no significa que se pueda licitar: el 60,7% de esos procesos
@@ -140,7 +152,7 @@ export function puntuar(f, p) {
   const dias = diasDesde(f.fecha_de_publicacion_del);
   if (dias !== null && dias > p.dias_maximos) {
     if (dias > 365) return { score: 0, razones: ["descartado: publicado hace " + dias + " dias, el plazo ya vencio"] };
-    puntos -= 30;
+    puntos -= p.penalty_antiguedad;
     razones.push("ATENCION: publicado hace " + dias + " dias");
   } else if (dias !== null && dias > 0) {
     razones.push("publicado hace " + dias + " dias");
@@ -149,18 +161,34 @@ export function puntuar(f, p) {
   return { score: Math.max(0, Math.min(100, Math.round(puntos))), razones };
 }
 
+/* No siempre trae la ficha del proceso. Hay filas cuyo `urlproceso` es la
+   pantalla de login de SECOP o la portada, que no llevan a ninguna parte.
+   Enviar a un cliente a una pagina de acceso parece fallo de la herramienta. */
+export function linkDe(f) {
+  let u = (typeof f.urlproceso === "object" && f.urlproceso)
+    ? (f.urlproceso.url || "")
+    : (f.urlproceso || "");
+  u = String(u).trim();
+  if (!u) return "";
+  const baja = u.toLowerCase();
+  const rotas = ["/sts/users/login", "login/index", "/secop.aspx", "/home/index"];
+  if (rotas.some((b) => baja.includes(b))) return "";
+  if (!baja.includes("opportunitydetail")) return "";
+  return u;
+}
+
 export function analizar(filas, perfil = PERFIL_POR_DEFECTO) {
   const out = [];
   for (const f of filas) {
     const { score, razones } = puntuar(f, perfil);
-    if (score >= 40) {
+    if (score >= (perfil.puntaje_minimo ?? 40)) {
       out.push({
         ...f,
         score,
         razones,
         objeto: objetoLimpio(f).texto,
         dias: diasDesde(f.fecha_de_publicacion_del),
-        link: (typeof f.urlproceso === "object" && f.urlproceso) ? (f.urlproceso.url || "") : (f.urlproceso || ""),
+        link: linkDe(f),
       });
     }
   }

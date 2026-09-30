@@ -114,4 +114,16 @@ export const PERFIL_POR_DEFECTO = {
   precio_min: 80000000,
   precio_max: 8000000000,
   dias_maximos: 90,
+  puntaje_minimo: 40,
+
+  /* Pesos del puntaje. Maximo 100 = sector perfecto + zona + presupuesto.
+     Estaban hardcodeados dentro de `puntuar()`; ahora se pueden mover sin
+     tocar el codigo, y el cliente puede ver de donde sale cada punto. */
+  peso_sector: 60,
+  peso_zona: 20,
+  peso_fuera_de_zona: 5,
+  peso_presupuesto: 20,
+  penalty_sobre_precio: 15,
+  penalty_antiguedad: 30,
+  aviso_si_oferentes: 25,
 };
